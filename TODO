@@ -1,0 +1,7 @@
+*think about the server app and the integration
+ with request and all that shite
+*a nice soulotion would be to manage express from the room manager,
+so u wont have to be agonizing with async data transfer 
+*make server's socket noitce when its menu call and when its chat call
+*present data of other user on client
+*integrate a [nice detail exposere mechanic, like photo reaveal or 'listen toghter']

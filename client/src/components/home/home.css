@@ -1,0 +1,52 @@
+
+#wrapHome > button{
+    color: white;
+    background-color: #42d763;
+    box-shadow: 1px -2px 18px -8px #68ea68;
+    padding: 8px;
+    border-radius: 12px;
+    border: solid #e4e4e4 3px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: all ease .2s;
+    font-weight: normal; 
+    flex-grow: 3;
+    max-height: 150px;
+    align-self: center;
+    max-width: 700px;
+}
+#wrapHome > h2{
+    flex-grow: 2;
+    background: linear-gradient(to right,#00ff6a,#003cff);
+    -webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+-webkit-box-decoration-break: clone;
+box-decoration-break: clone;
+text-shadow: none;
+    font-size: 2.5em;
+}
+#wrapHome > button:hover{
+border:solid transparent 3px;
+box-shadow: 1px -2px 18px -8px #33ff33;
+
+}
+#wrapHome > img{
+    justify-self: center;
+    align-self: center;
+    flex-grow: 5;
+}
+#wrapHome > .desc{
+    font-size: .7em;
+box-shadow: 3px 3px 7px -3px #a2d6d5;
+background-color: #e8fde4;
+padding: 1.2em;
+}
+#wrapHome{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #323332;
+    font-size: 2em;
+    margin: -3px;
+}
