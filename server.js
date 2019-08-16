@@ -81,7 +81,7 @@ app.get('/callback', function (req, res) {
       TOP_music.forEach((item)=>{
        favoriteImages.push(item.images[0]);
        app.post('/api/CoverArt', (req, res) => {   
-        res.send({backgroundURL:favoriteImages[7]});
+        res.send({backgroundURL:favoriteImages[12]});
       });  
     });
   });
@@ -91,18 +91,7 @@ app.get('/callback', function (req, res) {
     res.redirect(uri + '?access_token=' + access_token);
   })
 });
-// API calls
-/*app.get('/api/login', (req, res) => {
-  var scope = 'user-read-private user-read-email';
-  res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: client_id,
-      scope: scope,
-      redirect_uri: 'www.google.com',
-      state:'32132131312'
-    }));
-});*/
+
 
 app.post('/api/world', (req, res) => {
   

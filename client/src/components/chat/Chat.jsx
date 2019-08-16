@@ -52,8 +52,12 @@ class Title extends React.Component {
   class Writer extends React.Component {
     constructor(props) {
       super(props);
+      this.textInput = React.createRef();
       this.state = {
       };
+    }
+    componentDidMount(){
+      this.textInput.current.focus();
     }
     sendMessageToBody(msg) {
       this.props.onClick(msg);
@@ -66,7 +70,7 @@ class Title extends React.Component {
     render() {
       let Writer =
         <div id="Writer">
-          <input  disabled = {(this.props.disabled)?   "":"disabled"} value={this.props.inputValue} id="inputSpan" type="text" onChange={evt => this.updateInputValue(evt)} />
+          <input ref={this.textInput} autoFocus={true}   disabled = {(this.props.disabled)?   "":"disabled"} value={this.props.inputValue} id="inputSpan" type="text" onChange={evt => this.updateInputValue(evt)} />
           <SendButton  disabled ={this.props.disabled} onClick={() => this.sendMessageToBody(this.state.inputValue)} />
         </div>;
       return Writer;
@@ -114,9 +118,7 @@ class Title extends React.Component {
         backgroundURL: " ",
         style : {
           backgroundImage: "url('')"/*"url(" + this.state.backgroundURL + ")"*/,
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat'
+
         }
       };
       //this.callApi();

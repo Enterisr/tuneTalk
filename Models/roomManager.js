@@ -26,9 +26,7 @@ class RoomManager {
         }
        }
        if(room){
-      let reminingUsers =  room.DisconnectUser(socket);
-       reminingUsers.forEach((user)=>{this.Switchboard(user)});
-    
+      let reminingUsers =  room.DisconnectUser(socket);    
     }
          console.log(socket.toString());
 
