@@ -11,7 +11,7 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          rightHref: "http://"+window.location.hostname+":5000/api/login"
+          rightHref: window.location.origin+":5000/api/login"
 
         };
         //this.callApi();
