@@ -111,18 +111,25 @@ class Title extends React.Component {
         socket: io('/my-namespace'),
         roomID : 0,
         canWrite:false,
-        backgroundURL: ""
+        backgroundURL: " ",
+        style : {
+          backgroundImage: "url('')"/*"url(" + this.state.backgroundURL + ")"*/,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat'
+        }
       };
       //this.callApi();
     }
     componentDidMount(){
+
       fetch('/api/login', {
         method: 'GET',
         headers: {
           'Content-Type':  "text/html"
         }
       });
-     
+
      this.state.socket.on("New message",
      (msg,time)=>{
       var audio = new Audio('../../Message.mp3');
@@ -133,13 +140,19 @@ class Title extends React.Component {
      (msg,time)=>{
 
      this.setState({roomID:msg,canWrite:true});
-     fetch('/CoverArt', {
-      method: 'GET',
+     fetch('/api/CoverArt', {
+      method: 'POST',
       headers: {
         'Content-Type':  "text/HTML"
       }
-    }).then((URL)=>{
-    this.setState({backgroundURL:URL});
+    })
+    .then(data=>data.json())
+    .then((URL)=>{
+      this.setState({
+        style:{
+        backgroundImage:"url(" + URL.backgroundURL.url + ")",    
+      }
+    });
     });
     }
 );
@@ -149,29 +162,10 @@ class Title extends React.Component {
 
      });
     }
-
-
-
     PostMessage =  (chat) => {
       let dateRecived = -1;
       let message = this.state.inputValue;
       let x = true;
-     // this.callApi();
-
-  /*     fetch('/api/world', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ post: this.state.inputValue }),
-      })    
-      .then(res => res.text())//response type
-      .then(time => this.AppendMessage(this.state.inputValue ,time,true))
-      .then((res)=>{ this.state.socket.emit("New message",message); console.log(message); return res;})
- */
-     // .finally(res => res = 1); //log the data;
-
-//  this.setState({ responseToPost: body });
 this.state.socket.emit("New message",message); 
 console.log(message);
 this.AppendMessage(this.state.inputValue ,moment().format("HH:mm:ss"),true);
@@ -211,12 +205,7 @@ this.AppendMessage(this.state.inputValue ,moment().format("HH:mm:ss"),true);
       this.setState({ inputValue: inputValue });
     }
     renderWriter() {
-      let style = {
-        backgroundImage: "url(" + this.state.backgroundURL + ")",
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-      };
+
       return <Writer 
       inputValue= {this.state.inputValue} 
       onClick={this.SendMessage} 
@@ -235,10 +224,12 @@ this.AppendMessage(this.state.inputValue ,moment().format("HH:mm:ss"),true);
     }
 
     render() {
-      return (<div id="reactWrap" onKeyPress={this.HandleKeyPress}>
+      return (<div id="reactWrap" style = {this.state.style}
+      onKeyPress={this.HandleKeyPress}>
       <Title value = {this.state.roomID}/>
         {this.renderChatBody()}
         {this.renderWriter()}
+        
       </div>);
   
     }

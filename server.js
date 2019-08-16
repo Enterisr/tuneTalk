@@ -80,8 +80,8 @@ app.get('/callback', function (req, res) {
       let favoriteImages = [];
       TOP_music.forEach((item)=>{
        favoriteImages.push(item.images[0]);
-       app.post('/CoverArt', (req, res) => {   
-        res.send({backgroundURL:favoriteImages[0]});
+       app.post('/api/CoverArt', (req, res) => {   
+        res.send({backgroundURL:favoriteImages[7]});
       });  
     });
   });
