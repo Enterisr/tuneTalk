@@ -21,10 +21,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
-var client_id = '072359457f254ab1b168ae2643926e38'; // Your client id
-var client_secret = '53c148b3c9434846bec6bc7238957728'; // Your secret
+var client_id =***// Your client id
+var client_secret = ****// Your secret
 
-// your application requests authorization
 const authOptions = {
   url: 'https://accounts.spotify.com/api/token',
   headers: {
