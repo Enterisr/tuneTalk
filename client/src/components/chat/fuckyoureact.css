@@ -1,0 +1,178 @@
+body {
+	background-color: #383a39;
+
+	font-family: 'Montserrat', sans-serif;
+	overflow-x: hidden !important;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+div {
+	margin: 0;
+}
+#app {
+	display: block;
+	text-align: center;
+	margin: 0;
+}
+
+#reactWrap {
+	margin: 0;
+	display: grid;
+	display: -ms-grid;
+	grid-template-columns: 3fr 1fr;
+	grid-template-rows: 0.5fr 10fr 0.5fr;
+	height: 90vh;
+	margin: 2vh auto;
+	grid-gap: 0;
+	background-repeat: no-repeat;
+	background-size: 200%;
+	background-size: cover;
+	background-position: center center;
+	max-width: 1500px;
+}
+
+#title {
+	font-family: sans-serif, arial;
+	color: white;
+	background-color: #1d844d;
+	-ms-grid-row: 1;
+	font-family: 'Montserrat', sans-serif;
+	grid-row: 1;
+	padding: 1.5vh;
+	font-size: 20px;
+	text-align: center;
+	-ms-grid-column: 1;
+	-ms-grid-column-span: 2;
+	grid-column: 1/3;
+}
+
+#ChatBody {
+	grid-row: 2;
+	margin: 0;
+	-ms-grid-column: 1;
+	-ms-grid-column-span: 2;
+	grid-column: 1/3;
+	background-color: #222423ea;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	box-shadow: 1px 1px 1003px rgba(0, 255, 117, 0.1);
+	max-height: 100vh;
+	overflow-y: auto;
+	overflow-x: hidden !important;
+}
+.cancelButton {
+	font-size: 16px !important;
+}
+.confirmButton {
+	background-color: rgb(45, 218, 96);
+	padding-left: 30px !important;
+	text-align: center !important;
+}
+#Writer {
+	grid-row: 3;
+	-ms-grid-column: 1;
+	-ms-grid-column-span: 2;
+	grid-column: 1/3;
+	display: flex;
+	/*! position: absolute; */
+	margin: 0px;
+}
+
+#Writer button {
+	font-size: 10px;
+	flex-basis: 20%;
+	/*background-color: #000;*/
+	/* color: ligther(#dff1ed, 30%);*/
+	min-width: 70px;
+	font-size: 1.5em;
+	cursor: pointer;
+	border: none;
+	box-shadow: none;
+	-webkit-transition: all linear 0.1s;
+	transition: all linear 0.1s;
+	font-family: 'Montserrat', sans-serif;
+	max-width: 230px;
+}
+
+#Writer button:active {
+	background-color: #d1fff5;
+	-webkit-transform: scale(0.9);
+	transform: scale(0.9);
+}
+#Writer button:hover {
+	color: #16ff9e;
+}
+#Writer input {
+	flex-basis: 80%;
+	color: #2a374d;
+	background-color: #fff;
+	border: solid 1px #75c2b1;
+	font-size: 1rem;
+
+	flex-grow: 2;
+}
+#Writer input:focus {
+	background-color: #b5ebd4;
+}
+.activeButton {
+	background-color: #00000094;
+	color: white;
+}
+.passiveButton {
+	background-color: rgb(196, 206, 194);
+	color: ligther(#08f3c0, 30%);
+}
+.MyMessageStyle {
+	background-color: #fff;
+	color: #002545;
+	border-radius: 9px;
+	left: 0;
+	position: relative;
+	padding: 1%;
+	max-width: 30%;
+	padding: 1%;
+	padding-bottom: 1%;
+	margin: 10px;
+	-webkit-filter: blur(0px);
+	filter: blur(0px);
+	max-width: 350px;
+	padding-bottom: 1%;
+	margin: 1vw;
+	margin-top: 1vw;
+	margin-right: 1vw;
+	margin-bottom: 1vw;
+	margin-left: 1vw;
+	box-shadow: 0 3px 8px -1px #4f554f;
+	padding-bottom: 15px;
+	width: 30%;
+	overflow: auto;
+}
+.OtherMessageStyle {
+	background-color: rgb(45, 218, 96);
+	color: black;
+	overflow: auto;
+	border-radius: 9px;
+	left: 66%;
+	position: relative;
+	max-width: 350px;
+	padding: 1%;
+	max-width: 30%;
+	padding: 1%;
+	padding-bottom: 1%;
+	padding-bottom: 1%;
+	padding-bottom: 1%;
+	margin: 10px;
+	box-shadow: 0 15px 20px rgba(256, 256, 256, 0.1);
+	padding-bottom: 15px;
+	/*! max-width: 20vw; */
+	width: 30%;
+}
+/*  background-color: #16ff9e;
+color: #052c4e;
+border-radius: 15px;
+left: 0;
+position: relative;
+max-width: 30%;
+padding: 1%;
+margin: 10px;
+-webkit-box-shadow: 0 1px 5px #2d96f2;
+        box-shadow: 0 1px 5px #2d96f2;*/

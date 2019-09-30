@@ -1,0 +1,92 @@
+body {
+    background-color: #383a39;
+
+
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden !important;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+div {
+    margin: 0;
+}
+
+#wrapHome>button {
+    color: #fff;
+    background-color: #2d6f57;
+    box-shadow: 0px 0px 29px -13px #37b16a;
+    padding: 1em;
+    line-height: 0;
+    border-radius: 12px;
+    /*! border: solid #e4e4e4 3px; */
+    cursor: pointer;
+    font-size: 1em;
+    -webkit-transition: all ease .2s;
+    transition: all ease .2s;
+    font-weight: 100;
+    flex-grow: 3;
+    max-height: 2em;
+    align-self: center;
+    background: -webkit-linear-gradient(right, #49bd69, #2d6f57);
+    background: -webkit-gradient(linear, right top, left top, from(#49bd69), to(#2d6f57));
+    background: linear-gradient(to left, #49bd69, #2d6f57);
+    outline: none;
+    border: none;
+}
+
+#wrapHome>h2 {
+    /*! flex-grow: 2; */
+    background: -webkit-linear-gradient(left, #00ff6a, #003cff);
+    background: -webkit-gradient(linear, left top, right top, from(#00ff6a), to(#003cff));
+    background: linear-gradient(to right, #00ff6a, #003cff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    text-shadow: none;
+    font-size: 10vh;
+    margin: 0vh;
+}
+
+#wrapHome>button:hover {
+    /*! border:solid transparent 3px; */
+    box-shadow: 0 -7px 24px -12px #33c8ff;
+
+}
+
+#wrapHome>img {
+    justify-self: center;
+    align-self: center;
+    flex-grow: 0;
+    width: 50vh;
+}
+
+#wrapHome>.desc {
+    font-size: 2vh;
+    box-shadow: 0px 0px 0px 2px #a8ffff;
+    background-color: #323332;
+    padding: 1.2em;
+    width: 100%;
+    font-family: 'Karla', sans-serif;
+    color: white;
+    background: -webkit-linear-gradient(#323332, #1b2d1f);
+    background: -webkit-linear-gradient(#323332, #2b2b2b);
+    background: -webkit-gradient(linear, left top, left bottom, from(#323332), to(#2b2b2b));
+    background: linear-gradient(#323332, #a8ffff38);
+    margin: 0 auto;
+    width: 70vw;
+}
+
+#wrapHome {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #323332;
+    font-size: 2em;
+    margin: -3px;
+}
