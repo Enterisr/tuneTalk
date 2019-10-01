@@ -85,6 +85,13 @@ exports.EmitToRoom = function(room, eventName, msg) {
 if (process.env.NODE_ENV === 'production') {
 	// Serve any static files
 	app.use(express.static(path.join(__dirname, 'client/build'))).use(cors()).use(cookieParser());
+	app.use(express.static('client/build'));
+
+	// Express serve up index.html file if it doesn't recognize route
+	const path = require('path');
+	app.get('*', (req, res) => {
+		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+	});
 }
 function generateRandomString(length) {
 	var text = '';
