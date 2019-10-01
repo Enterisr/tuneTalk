@@ -14,7 +14,9 @@ class Home extends React.Component {
 			? `http://${window.location.hostname}:5000/newHere`
 			: `https://${window.location.hostname}/newHere`;
 		this.state = {
-			rightHref: href
+			rightHref: href,
+			redirect: false,
+			token: ''
 		};
 	}
 	componentDidMount() {}
@@ -31,7 +33,12 @@ class Home extends React.Component {
 
 				<button
 					onClick={() => {
-						window.location.href = this.state.rightHref;
+						//	window.location.href = this.state.rightHref;
+						fetch(`https://${window.location.hostname}/newHere`).then((res) => {
+							this.state.token = res.body;
+							history.push('chat/' + this.state.token);
+							this.state.redirect = true;
+						});
 					}}
 				>
 					{' '}

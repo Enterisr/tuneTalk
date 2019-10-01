@@ -62,7 +62,7 @@ app.get('/callback', async function(req, res) {
 		await user.ConnectToSpotify();
 		let uri = process.env.FRONTEND_URI || 'http://192.168.1.102:3000';
 		uri = uri + '/chat';
-		res.redirect(uri + '?access_token=' + access_token);
+		res.send('?access_token=' + access_token);
 		nsp.on('connection', function(socket) {
 			user.BindToSocket(socket);
 			RM.SearchRoom(user);

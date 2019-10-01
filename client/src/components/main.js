@@ -9,14 +9,12 @@ import Home from './home/Home.jsx';
 // with /roster or /schedule. The / route will only match
 // when the pathname is exactly the string "/"
 const Main = () => (
-	<BrowserRouter>
-		<main>
-			<Switch>
-				<Route path="/chat" component={Chat} />
-				<Route path="*" component={Home} />
-			</Switch>
-		</main>
-	</BrowserRouter>
+	<main>
+		<Switch>
+			<Route path="/chat" component={Chat} />
+			<Route path="*" component={Home} />
+		</Switch>
+	</main>
 );
 
 export default Main;
