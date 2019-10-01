@@ -11,9 +11,8 @@ import Home from './home/Home.jsx';
 const Main = () => (
 	<main>
 		<Switch>
-			<Route path="/chat" render={(props) => <Chat {...props} isAuthed={true} />} />
-
-			<Route path="*" component={Home} />
+			<Route path="/chat" component={Chat} />
+			<Route exact path="/" component={Home} />
 		</Switch>
 	</main>
 );

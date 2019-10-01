@@ -61,11 +61,10 @@ app.get('/callback', async function(req, res) {
 		user = new User(req.ip, new moment(), access_token);
 		await user.ConnectToSpotify();
 		let uri = process.env.FRONTEND_URI || 'http://192.168.1.102:3000';
-		res.redirect(uri + '?access_token=' + access_token);
-
+		res.redirect(uri + '/chat?access_token=' + access_token);
 		nsp.on('connection', function(socket) {
 			user.BindToSocket(socket);
-			RM.SearchRoom(user);
+			//		RM.SearchRoom(user);
 		});
 	});
 });

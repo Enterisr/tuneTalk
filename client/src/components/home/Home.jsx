@@ -17,43 +17,31 @@ class Home extends React.Component {
 			? `http://${window.location.hostname}:5000/newHere`
 			: `https://${window.location.hostname}/newHere`;
 		this.state = {
-			rightHref: href,
-			token: '',
-			redirect: !window.location.href.includes('?') //temp workaround!!!!!! TODO: DOESN'T REALLY WORKS/
+			rightHref: href
 		};
-		autoBind(this);
 	}
 	componentDidMount() {}
-	renderRedirect() {
-		let to = window.location.href.slice(window.location.href.indexOf('?'));
-		this.setState({ token: to });
-		return <Redirect to={'/chat' + this.state.token} />;
-	}
 
 	render() {
-		if (this.state.redirect) {
-			return (
-				<div id="wrapHome">
-					<h2>Are you the new guy?</h2>
-					<img width="400px" src={image} />
+		return (
+			<div id="wrapHome">
+				<h2>Are you the new guy?</h2>
+				<img width="400px" src={image} />
 
-					<p class="desc">
-						subscribe via your spotify account to connect to other K00L fucking people like yourself!
-					</p>
+				<p class="desc">
+					subscribe via your spotify account to connect to other K00L fucking people like yourself!
+				</p>
 
-					<button
-						onClick={() => {
-							window.location.href = this.state.rightHref;
-						}}
-					>
-						{' '}
-						get me in!
-					</button>
-				</div>
-			);
-		} else {
-			return this.renderRedirect();
-		}
+				<button
+					onClick={() => {
+						window.location.href = this.state.rightHref;
+					}}
+				>
+					{' '}
+					get me in!
+				</button>
+			</div>
+		);
 	}
 }
 export default Home;
