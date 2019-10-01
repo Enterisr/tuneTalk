@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Chat from './chat/Chat.jsx';
 import Home from './home/Home.jsx';
 
@@ -9,12 +9,14 @@ import Home from './home/Home.jsx';
 // with /roster or /schedule. The / route will only match
 // when the pathname is exactly the string "/"
 const Main = () => (
-	<main>
-		<Switch>
-			<Route exact path="/" component={Home} />
-			<Route path="/chat" component={Chat} />
-		</Switch>
-	</main>
+	<BrowserRouter>
+		<main>
+			<Switch>
+				<Route path="/chat" component={Chat} />
+				<Route path="*" component={Home} />
+			</Switch>
+		</main>
+	</BrowserRouter>
 );
 
 export default Main;
