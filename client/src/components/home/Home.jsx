@@ -18,15 +18,15 @@ class Home extends React.Component {
 			: `https://${window.location.hostname}/newHere`;
 		this.state = {
 			rightHref: href,
-			token:'',
+			token: '',
 			redirect: !window.location.href.includes('?') //temp workaround!!!!!! TODO: DOESN'T REALLY WORKS/
 		};
 		autoBind(this);
 	}
 	componentDidMount() {}
 	renderRedirect() {
-		let to = window.location.href.slice(window.location.href.indexOf('?');
-		this.setState( {token:to});
+		let to = window.location.href.slice(window.location.href.indexOf('?'));
+		this.setState({ token: to });
 		return <Redirect to={'/chat' + this.state.token} />;
 	}
 
