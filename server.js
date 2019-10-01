@@ -16,7 +16,9 @@ var cors = require('cors');
 var cookieParser = require('cookie-parser');
 var client_id = '072359457f254ab1b168ae2643926e38'; // Your client id
 var client_secret = '53c148b3c9434846bec6bc7238957728'; // Your secret
-let redirect_uri = 'http://192.168.1.102:5000/callback/';
+let redirect_uri = port.includes('5000') //dev
+	? 'http://192.168.1.102:5000/callback/'
+	: 'https://tunetalk.herokuapp.com/callback';
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('./public')).use(cors()).use(cookieParser());
