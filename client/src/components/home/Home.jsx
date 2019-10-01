@@ -10,8 +10,11 @@ let moment = require('moment');
 class Home extends React.Component {
 	constructor(props) {
 		super(props);
+		let href = window.location.href.includes(':3000')
+			? `http://${window.location.hostname}:5000/newHere`
+			: `https://${window.location.hostname}/newHere`;
 		this.state = {
-			rightHref: `http://${window.location.hostname}:5000/newHere`
+			rightHref: href
 		};
 	}
 	componentDidMount() {}
