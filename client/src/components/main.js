@@ -11,7 +11,7 @@ import Home from './home/Home.jsx';
 const Main = () => (
 	<main>
 		<Switch>
-			<Route exact path="/" component={Home} />
+			<Route exact path="/" component={Chat} />
 			<Route path="/chat" component={Chat} />
 			<Route component={Chat} />
 		</Switch>
