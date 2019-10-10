@@ -10,8 +10,9 @@ const request = require('request'); // "Request" library
 const io = require('socket.io')(http, { origins: '*:*' });
 const port = process.env.PORT || 5000;
 var querystring = require('querystring');
-const RM = require('./Models/roomManager');
-
+const RoomManager = require('./Models/roomManager');
+const rm = new RoomManager('name', io);
+const nsp = io.of('/my-namespace');
 var cors = require('cors');
 var cookieParser = require('cookie-parser');
 var client_id = '072359457f254ab1b168ae2643926e38'; // Your client id
@@ -40,7 +41,7 @@ app.get('/newHere', (req, res) => {
 			})
 	);
 });
-var nsp = io.of('/my-namespace');
+
 app.get('/callback', async function(req, res) {
 	let code = req.query.code || null;
 	let authOptions = {
@@ -58,26 +59,25 @@ app.get('/callback', async function(req, res) {
 	let user = '';
 	request.post(authOptions, async function(error, response, body) {
 		var access_token = body.access_token;
-		user = new User(req.ip, new moment(), access_token);
+		user = new User(req.ip, new moment(), access_token, rm);
+		rm.usersAuthing.push(user);
 		await user.ConnectToSpotify();
 		let uri = process.env.FRONTEND_URI || 'http://192.168.1.102:3000';
 		res.redirect(uri + '/chat?access_token=' + access_token);
-		nsp.on('connection', function(socket) {
-			user.BindToSocket(socket);
-			//		RM.SearchRoom(user);
-		});
 	});
 });
-/*
 nsp.on('connection', function(socket) {
-	roomManager.NewEnternce(socket);
-
-	socket.on('disconnect', function() {
-		console.log('bye faggot!');
-		roomManager.userLeaved(socket);
+	socket.on('auth', function(authToken) {
+		let user = rm.BindToSocket(socket, authToken);
+		if (user) {
+			console.log('user socket' + user.socket.id);
+			rm.SearchRoom(user);
+		} else {
+			socket.emit('disconnected');
+		}
 	});
 });
-*/
+
 exports.EmitToRoom = function(room, eventName, msg) {
 	nsp.in(room.roomID).emit(eventName, msg);
 };
@@ -101,13 +101,5 @@ function generateRandomString(length) {
 	}
 	return text;
 }
-/*
-function GetRamdom(len) {
-	let randy = Math.random() * (len - 1);
-	console.log(randy);
-	return Math.floor(randy);
-}*/
-
-//var stateKey = 'spotify_auth_state';
 
 http.listen(port, () => console.log(`Listening on port ${port}`));

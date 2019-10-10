@@ -117,7 +117,7 @@ class EntireChat extends React.Component {
 			chatLogOwnerShip: [],
 			servereq: 'none',
 			socket: io('/my-namespace'),
-			roomID: 0,
+			roomID: 'searching...',
 			canWrite: false,
 			backgroundURL: ' ',
 			style: {
@@ -125,14 +125,18 @@ class EntireChat extends React.Component {
 			}
 		};
 		autoBind(this);
-		this.state.socket.emit('');
 	}
 	componentDidMount() {
 		this.state.socket.on('New message', (msg, time) => {
 			this.AppendMessage(msg, time, false);
 		});
+		this.state.socket.on('connect', () => {
+			let url = new URL(window.location.href);
+			let authToken = url.searchParams.get('access_token');
+			this.state.socket.emit('auth', authToken);
+		});
 		this.state.socket.on('enteredRoom', (msg) => {
-			this.setState({ roomID: msg, canWrite: true });
+			this.setState({ roomID: msg.roomID, canWrite: true });
 			fetch('/api/CoverArt', {
 				method: 'POST',
 				headers: {
@@ -151,7 +155,12 @@ class EntireChat extends React.Component {
 		});
 
 		this.state.socket.on('roomEmpty', (msg) => {
-			this.setState({ roomID: msg, chatLog: [], chatLogOwnerShip: [], canWrite: false });
+			this.setState({
+				roomID: 'looks like the other fellow left! there are plenty of fish in the sea :)',
+				chatLog: [],
+				chatLogOwnerShip: [],
+				canWrite: false
+			});
 		});
 	}
 	PostMessage() {

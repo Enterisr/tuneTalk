@@ -17,34 +17,40 @@ app.use(express.static(__dirname + '/public')).use(cors()).use(cookieParser());
 var client_id = '072359457f254ab1b168ae2643926e38'; // Your client id
 var client_secret = '53c148b3c9434846bec6bc7238957728'; // Your secret
 let redirect_uri = 'http://192.168.1.102:5000/callback/';
+
 class RoomManager {
-	constructor(nameSpace) {
+	constructor(nameSpace, io) {
 		this.rooms = [];
 		this.LastRoomID = 0;
 		this.nameSpace = nameSpace;
 		this.userCount = 0;
 		this.users = [];
+		this.io = io;
+		this.usersAuthing = []; //1st prop - auth, 2st - user [{'aasdasda31312',{user object}}]
 		this.usersWaiting = [];
 	}
-	userLeaved(socket) {
-		let userToDelete = '';
-		let room = '';
-		let user = '';
-		let indexOfRoom = '-1';
-		for (let i = 0; i < this.rooms.length; i++) {
-			user = this.rooms[i].isYouruser(socket);
-			if (user) {
-				room = this.rooms[i];
-				indexOfRoom = i;
-				break;
-			}
-		}
-		if (room) {
-			let reminingUsers = room.DisconnectUser(socket);
-		}
-		console.log(socket.toString());
-	}
 
+	BindToSocket(socket, auth) {
+		let idxToRemove = -1;
+		let user = this.usersAuthing.find((user, idx) => {
+			idxToRemove = idx;
+			return user.access_token === auth;
+		});
+		if (typeof user !== 'undefined') {
+			this.usersAuthing.splice(idxToRemove, ++idxToRemove);
+			this.users.push(user);
+			user.BindToSocket(socket);
+			return user;
+		} else {
+			socket.disconnect();
+			return false;
+		}
+	}
+	DeleteUser(user) {
+		this.users = this.users.filter((cuser, idx) => {
+			return cuser.socket.id !== user.socket.id;
+		});
+	}
 	RoomIsWaiting(user) {
 		let Open_room = false;
 		this.rooms.forEach((room) => {
@@ -65,17 +71,23 @@ class RoomManager {
 	SearchRoom(user) {
 		let compatibeUser = this.SearchUsersWithNGenres(user, user.musicTaste.length);
 		if (compatibeUser !== null) {
+			user.chatter = compatibeUser;
+			compatibeUser.chatter = user;
 			user.JoinRoom('room-' + this.LastRoomID);
 			compatibeUser.JoinRoom('room-' + this.LastRoomID);
+
+			let thisRoom = this.LastRoomID;
 			this.LastRoomID++;
+			return 'room-' + thisRoom;
 		} else {
 			this.usersWaiting.push(user);
 			user.keepLooking();
+			return false;
 		}
 	}
 	SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 0) {
 		for (let i = 0; i < this.usersWaiting.length; i++) {
-			let comparedUser = this.users[i];
+			let comparedUser = this.usersWaiting[i];
 			let compatibilityScore = 0;
 			let isNotCompatible = false;
 			for (let j = 0; j < user.musicTaste.length && !isNotCompatible; j++) {
@@ -88,6 +100,7 @@ class RoomManager {
 			}
 			if (compatibilityScore === TasteReqierd) {
 				console.log('found compatibility of ' + compatibilityScore);
+				this.usersWaiting.splice(i, i + 1);
 				return comparedUser;
 			}
 		}
@@ -113,90 +126,8 @@ class RoomManager {
 					state: state
 				})
 		);
-
-		/*		app.app.get('/newHere', function(req, res) {
-			var state = generateRandomString(16);
-			res.cookie(stateKey, state);
-
-			var scope = 'user-read-private user-read-email user-top-read';
-			res.redirect(
-				'https://accounts.spotify.com/authorize?' +
-					querystring.stringify({
-						response_type: 'code',
-						client_id: client_id,
-						scope: scope,
-						redirect_uri: redirect_uri,
-						state: state
-					})
-			);
-		});
-		app.get('/callback', function(req, res) {
-			let code = req.query.code || null;
-			let authOptions = {
-				url: 'https://accounts.spotify.com/api/token',
-				form: {
-					code: code,
-					redirect_uri,
-					grant_type: 'authorization_code'
-				},
-				headers: {
-					Authorization: 'Basic ' + new Buffer(client_id + ':' + client_secret).toString('base64')
-				},
-				json: true
-			};
-			request.post(authOptions, function(error, response, body) {
-				var access_token = body.access_token;
-
-				var options = {
-					url: 'https://api.spotify.com/v1/me/top/artists',
-					headers: { Authorization: 'Bearer ' + access_token },
-					json: true
-				};
-
-				// use the access token to access the Spotify Web API
-				request.get(options, function(error, response, body) {
-					TOP_music = body.items;
-					let favoriteImages = [];
-					TOP_music.forEach((item) => {
-						favoriteImages.push(item.images[0]);
-						app.post('/api/CoverArt', (req, res) => {
-							res.send({ backgroundURL: favoriteImages[GetRamdom(favoriteImages.length - 1)] });
-						});
-					});
-				});
-				let uri = process.env.FRONTEND_URI || 'http://192.168.1.102:3000';
-				uri = uri + '/chat';
-
-				res.redirect(uri + '?access_token=' + access_token);
-			});
-		});
-
-		app.get('/api/refresh_token', function(req, res) {
-			// requesting access token from refresh token
-			var refresh_token = req.query.refresh_token;
-			var authOptions = {
-				url: 'https://accounts.spotify.com/api/token',
-				headers: { Authorization: 'Basic ' + new Buffer(client_id + ':' + client_secret).toString('base64') },
-				form: {
-					grant_type: 'refresh_token',
-					refresh_token: refresh_token
-				},
-				json: true
-			};
-
-			request.post(authOptions, function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					var access_token = body.access_token;
-					res.send({
-						access_token: access_token
-					});
-				}
-			});
-		});
-		this.Switchboard(user);
-		return user;*/
 	}
-	DisconectUserFromRoom(user) {
+	/*	DisconectUserFromRoom(user) {
 		let Selectedroom = '';
 		this.rooms.forEach((room) => {
 			if (room.roomID == user.roomID) {
@@ -205,7 +136,7 @@ class RoomManager {
 		});
 		Selectedroom.DisconnectUser(user.socket);
 	}
-	Switchboard(user) {
+	/*Switchboard(user) {
 		// let user = user;
 		let room = this.RoomIsWaiting(user);
 		if (!room && user.roomID == -1) {
@@ -222,7 +153,7 @@ class RoomManager {
 		}
 
 		return room;
-	}
+	}*/
 }
 
 module.exports = RoomManager;

@@ -10,14 +10,23 @@ const RM = require('./roomManager');
 	}
 }*/
 class User {
-	constructor(ip, connectedIn, spotifyAcssesToken, spotifyID = 'notConnected', socketID = 'notConnected') {
+	constructor(
+		ip,
+		connectedIn,
+		spotifyAcssesToken,
+		roomManager,
+		spotifyID = 'notConnected',
+		socketID = 'notConnected'
+	) {
 		this.ip = ip;
 		this.connectedIn = connectedIn;
 		this.roomID = -1;
+		this.roomManager = roomManager;
 		this.spotifyID = spotifyID;
 		this.socket = 'not bined yet';
 		this.access_token = spotifyAcssesToken;
 		this.favArtists = -1;
+		this.chatter = '';
 	}
 
 	async ConnectToSpotify() {
@@ -36,12 +45,21 @@ class User {
 		]);
 		this.spotifyID = userStats.data.id;
 		this.favArtists = favArtists.data.items;
-		this.musicalTaste = this.GetGeneresFromArtists();
+		this.musicTaste = this.GetGeneresFromArtists();
 		return 'yessss';
 	}
 
 	BindToSocket(socket) {
-		this.socketID = socket;
+		this.socket = socket;
+		this.socket.on('New message', (msg) => {
+			this.socket.to(this.roomID).emit('New message', msg);
+		});
+		this.socket.on('disconnect', () => {
+			console.log('bye faggot!');
+			this.socket.to(this.roomID).emit('roomEmpty');
+			this.roomManager.DeleteUser(this);
+			this.roomManager.SearchRoom(this.chatter);
+		});
 	}
 	GetGeneresFromArtists() {
 		let geners = [];
@@ -51,9 +69,13 @@ class User {
 		return FindMostCommonGeners(geners, 6);
 	}
 	JoinRoom(roomName) {
-		this.socket.join(roomName);
-		this.roomID = roomName;
-		this.socket.to(this.roomID).emit('enteredRoom');
+		this.socket.join(roomName, () => {
+			this.roomID = roomName;
+			this.socket.emit('enteredRoom', { roomID: this.roomID });
+		});
+	}
+	keepLooking() {
+		console.log('keep looking you snowflake asshole-' + this.socket.id);
 	}
 }
 
