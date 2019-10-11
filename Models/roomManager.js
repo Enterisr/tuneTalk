@@ -110,6 +110,9 @@ class RoomManager {
 			let comparedUser = this.usersWaiting[i];
 			let compatibilityScore = 0;
 			let isNotCompatible = false;
+			console.log(user.socket.id + ' music taste: ' + user.musicTaste);
+			console.log(comparedUser.socket.id + ' music taste: ' + comparedUser.musicTaste);
+
 			for (let j = 0; j < user.musicTaste.length && !isNotCompatible; j++) {
 				for (let k = 0; k < user.musicTaste.length; k++) {
 					if (comparedUser.musicTaste[j] === user.musicTaste[k]) {
