@@ -3,6 +3,7 @@ import './fuckyoureact.css';
 import io from 'socket.io-client';
 import autoBind from 'react-autobind';
 import moment from 'moment';
+import Sound from 'react-sound';
 class Title extends React.Component {
 	componentDidMount() {}
 	render() {
@@ -135,6 +136,7 @@ class EntireChat extends React.Component {
 			roomID: 'searching...',
 			canWrite: false,
 			backgroundURL: ' ',
+			playAudio: 'STOPPED',
 			style: {
 				backgroundImage: "url('')" /*"url(" + this.state.backgroundURL + ")"*/
 			},
@@ -167,6 +169,7 @@ class EntireChat extends React.Component {
 		this.state.socket.on('New message', (msg, time) => {
 			this.AppendMessage(msg, time, false);
 			this.appendToTitle();
+			this.setState({ playAudio: 'PLAYING' });
 		});
 		this.state.socket.on('connect', () => {
 			let url = new URL(window.location.href);
@@ -174,7 +177,13 @@ class EntireChat extends React.Component {
 			this.state.socket.emit('auth', authToken);
 		});
 		this.state.socket.on('enteredRoom', (msg) => {
-			this.setState({ roomID: msg.roomID, canWrite: true });
+			this.setState({
+				roomID: msg.roomID,
+				canWrite: true,
+				style: {
+					backgroundImage: 'url("' + msg.backgroundImage.url + '")'
+				}
+			});
 			fetch('/api/CoverArt', {
 				method: 'POST',
 				headers: {
@@ -259,6 +268,10 @@ class EntireChat extends React.Component {
 		return (
 			<div id="reactWrap" style={this.state.style} onKeyPress={this.HandleKeyPress}>
 				<Title value={this.state.roomID} />
+				<Sound
+					url="http://www.sounds.beachware.com/2illionzayp3may/jspjrz/BLOOP.mp3"
+					playStatus={this.state.playAudio}
+				/>
 				{this.renderChatBody()}
 				{this.renderWriter()}
 			</div>

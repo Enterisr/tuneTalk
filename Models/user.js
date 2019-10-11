@@ -46,6 +46,7 @@ class User {
 		]);
 		this.spotifyID = userStats.data.id;
 		this.favArtists = favArtists.data.items;
+		this.backgroundImage = this.favArtists[0].images[0];
 		this.musicTaste = this.GetGeneresFromArtists();
 		return 'yessss';
 	}
@@ -69,10 +70,10 @@ class User {
 		});
 		return FindMostCommonGeners(geners, 6);
 	}
-	JoinRoom(roomName) {
+	JoinRoom(roomName, roomBacground) {
 		this.socket.join(roomName, () => {
 			this.roomID = roomName;
-			this.socket.emit('enteredRoom', { roomID: this.roomID });
+			this.socket.emit('enteredRoom', { roomID: this.roomID, backgroundImage: roomBacground });
 		});
 	}
 	keepLooking() {

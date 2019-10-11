@@ -36,7 +36,14 @@ class RoomManager {
 			idxToRemove = idx;
 			return user.access_token === auth;
 		});
-		if (typeof user !== 'undefined') {
+		/*		if (user === 'undefined') {
+			user = this.users.find((user, idx) => {
+				isNewUser = false;
+				idxToRemove = idx;
+				return user.access_token === auth;
+			});
+		}*/
+		if (typeof user !== 'undefined' /*&& isNewUser)*/) {
 			this.usersAuthing.splice(idxToRemove, ++idxToRemove);
 			this.users.push(user);
 			user.BindToSocket(socket);
@@ -68,13 +75,25 @@ class RoomManager {
 		//console.log(user.name + " created room number "+newRoom.roomID)
 		return newRoom;
 	}
+	FindSharedArtist(user, user2) {
+		for (let i = 0; i < user.favArtists.length; i++) {
+			for (let j = 0; i < user2.favArtists.length; j++) {
+				if (user.favArtists[i].id == user2.favArtists[j].id) {
+					return user.favArtists[i];
+				}
+			}
+		}
+		return user.favArtists[0];
+	}
 	SearchRoom(user) {
-		let compatibeUser = this.SearchUsersWithNGenres(user, user.musicTaste.length);
+		let compatibeUser = this.SearchUsersWithNGenres(user, user.musicTaste.length, 3);
 		if (compatibeUser !== null) {
+			let sharedArtist = this.FindSharedArtist(user, compatibeUser);
+			const roomBackground = sharedArtist.images[0];
 			user.chatter = compatibeUser;
 			compatibeUser.chatter = user;
-			user.JoinRoom('room-' + this.LastRoomID);
-			compatibeUser.JoinRoom('room-' + this.LastRoomID);
+			user.JoinRoom('room-' + this.LastRoomID, roomBackground);
+			compatibeUser.JoinRoom('room-' + this.LastRoomID, roomBackground);
 
 			let thisRoom = this.LastRoomID;
 			this.LastRoomID++;
@@ -94,12 +113,16 @@ class RoomManager {
 				for (let k = 0; k < user.musicTaste.length; k++) {
 					if (comparedUser.musicTaste[j] === user.musicTaste[k]) {
 						compatibilityScore++;
+						console.log(
+							comparedUser.socket.id + ' and ' + user.socket.id + ' loves ' + comparedUser.musicTaste[j]
+						);
 					}
 				}
 				isNotCompatible = j > TasteReqierd && compatibilityScore < TasteReqierd;
 			}
 			if (compatibilityScore === TasteReqierd) {
 				console.log('found compatibility of ' + compatibilityScore);
+
 				this.usersWaiting.splice(i, i + 1);
 				return comparedUser;
 			}

@@ -27,7 +27,7 @@ div {
 	background-repeat: no-repeat;
 	background-size: 200%;
 	background-size: cover;
-	background-position: center center;
+	background-position: center top;
 	max-width: 1500px;
 }
 
@@ -161,24 +161,18 @@ div {
 	margin: 1%;
 }
 .OtherMessageStyle .timeStyle {
-	font-size: 11px;
-
-	text-align: left;
-
-	color: #23dd79;
-
-	font-family: david;
-
-	font-style: oblique;
+	font-size: .7EM;
+	text-align: right;
+	color: #33a16a;
+	font-family: 'Segoe UI';
+	font-style: italic;
 }
 .MyMessageStyle .timeStyle {
-	font-size: 11px;
-
+	font-size: .7EM;
 	text-align: right;
-
-	color: green;
-
-	font-family: david;
+	color: #242625;
+	font-family: 'Segoe UI';
+	font-style: italic;
 }
 @media screen and (max-width: 700px) {
 	.OtherMessageStyle {
