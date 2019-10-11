@@ -1,5 +1,6 @@
 const axios = require('axios');
 const RM = require('./roomManager');
+const moment = require('moment');
 /*class Message {
 	constructor(socket, time, value, from, to) {
 		this.socket = socket;
@@ -52,13 +53,13 @@ class User {
 	BindToSocket(socket) {
 		this.socket = socket;
 		this.socket.on('New message', (msg) => {
-			this.socket.to(this.roomID).emit('New message', msg);
+			this.socket.to(this.roomID).emit('New message', msg, moment().format('HH:mm:ss'));
 		});
 		this.socket.on('disconnect', () => {
 			console.log('bye faggot!');
 			this.socket.to(this.roomID).emit('roomEmpty');
 			this.roomManager.DeleteUser(this);
-			this.roomManager.SearchRoom(this.chatter);
+			if (this.chatter) this.roomManager.SearchRoom(this.chatter);
 		});
 	}
 	GetGeneresFromArtists() {

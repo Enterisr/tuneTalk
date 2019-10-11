@@ -46,6 +46,8 @@ class Message extends React.Component {
 	}
 }
 class Writer extends React.Component {
+	messagesEndRef = React.createRef();
+
 	constructor(props) {
 		super(props);
 		this.textInput = React.createRef();
@@ -89,10 +91,17 @@ class ChatBody extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+		this.messagesEndRef = React.createRef();
 		autoBind(this);
 	}
+	scrollToBottom = () => {
+		this.messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+	};
 	renderMessage(messageVal, key, Author) {
 		return <Message val={messageVal} key={key} IsAuthor={Author} />;
+	}
+	componentDidUpdate() {
+		this.scrollToBottom();
 	}
 	renderMessages() {
 		let Messages = [];
@@ -103,8 +112,14 @@ class ChatBody extends React.Component {
 	}
 
 	render() {
-		const body = <div id="ChatBody">{this.renderMessages()}</div>;
-		return body;
+		return (
+			<React.Fragment>
+				<div id="ChatBody">
+					{this.renderMessages()}
+					<div ref={this.messagesEndRef} />
+				</div>
+			</React.Fragment>
+		);
 	}
 }
 
@@ -122,13 +137,36 @@ class EntireChat extends React.Component {
 			backgroundURL: ' ',
 			style: {
 				backgroundImage: "url('')" /*"url(" + this.state.backgroundURL + ")"*/
-			}
+			},
+			windowHasFocus: false
 		};
 		autoBind(this);
 	}
+	onFocus = () => {
+		this.setState({ windowHasFocus: !this.state.windowHasFocus });
+		if (this.state.windowHasFocus) {
+			document.title = 'tuneTalk';
+		}
+	};
+
+	componentWillUnmount() {
+		window.removeEventListener('focus', this.onFocus);
+	}
+	componentWillUpdate() {}
+	appendToTitle() {
+		if (!this.state.windowHasFocus) {
+			document.title.includes('new message!')
+				? (document.title = document.title)
+				: (document.title = 'new message!');
+		} else {
+			document.title = 'tuneTalk';
+		}
+	}
 	componentDidMount() {
+		window.addEventListener('focus', this.onFocus);
 		this.state.socket.on('New message', (msg, time) => {
 			this.AppendMessage(msg, time, false);
+			this.appendToTitle();
 		});
 		this.state.socket.on('connect', () => {
 			let url = new URL(window.location.href);
@@ -163,6 +201,7 @@ class EntireChat extends React.Component {
 			});
 		});
 	}
+
 	PostMessage() {
 		let message = this.state.inputValue;
 		this.state.socket.emit('New message', message);
@@ -176,15 +215,10 @@ class EntireChat extends React.Component {
 		}
 	}
 	AppendMessage(val, time, owner) {
-		const timeStyle = {
-			fontSize: '10px',
-			textAlign: 'left',
-			color: 'green'
-		};
 		const chat = this.state.chatLog.slice();
 		let WholeDiv = (
 			<div>
-				<div style={timeStyle}>{time}</div>
+				<div className="timeStyle">{time}</div>
 				<div>{val}</div>
 			</div>
 		);
