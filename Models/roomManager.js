@@ -86,7 +86,7 @@ class RoomManager {
 		return user.favArtists[0];
 	}
 	SearchRoom(user) {
-		let compatibeUser = this.SearchUsersWithNGenres(user, user.musicTaste.length, 3);
+		let compatibeUser = this.SearchUsersWithNGenres(user, user.musicTaste.length, 1);
 		if (compatibeUser !== null) {
 			let sharedArtist = this.FindSharedArtist(user, compatibeUser);
 			const roomBackground = sharedArtist.images[0];
