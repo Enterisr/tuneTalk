@@ -77,7 +77,7 @@ class RoomManager {
 	}
 	FindSharedArtist(user, user2) {
 		for (let i = 0; i < user.favArtists.length; i++) {
-			for (let j = 0; i < user2.favArtists.length; j++) {
+			for (let j = 0; j < user2.favArtists.length; j++) {
 				if (user.favArtists[i].id == user2.favArtists[j].id) {
 					return user.favArtists[i];
 				}
@@ -106,6 +106,7 @@ class RoomManager {
 	}
 	SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 0) {
 		for (let i = 0; i < this.usersWaiting.length; i++) {
+			//TODO: SPILCE EVERY TIME FOUND ZEBRE, TO SHORTEN THE LOOP;
 			let comparedUser = this.usersWaiting[i];
 			let compatibilityScore = 0;
 			let isNotCompatible = false;
