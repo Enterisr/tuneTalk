@@ -86,7 +86,7 @@ class RoomManager {
 		return user.favArtists[0];
 	}
 	SearchRoom(user) {
-		let compatibeUser = this.SearchUsersWithNGenres(user, user.musicTaste.length, 1);
+		let compatibeUser = this.SearchUsersWithNGenres(user, user.musicTaste.length);
 		if (compatibeUser !== null) {
 			let sharedArtist = this.FindSharedArtist(user, compatibeUser);
 			const roomBackground = sharedArtist.images[0];
@@ -104,7 +104,7 @@ class RoomManager {
 			return false;
 		}
 	}
-	SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 0) {
+	SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 1) {
 		for (let i = 0; i < this.usersWaiting.length; i++) {
 			//TODO: SPILCE EVERY TIME FOUND ZEBRE, TO SHORTEN THE LOOP;
 			let comparedUser = this.usersWaiting[i];
@@ -112,22 +112,27 @@ class RoomManager {
 			let isNotCompatible = false;
 			console.log(user.socket.id + ' music taste: ' + user.musicTaste);
 			console.log(comparedUser.socket.id + ' music taste: ' + comparedUser.musicTaste);
-
-			for (let j = 0; j < user.musicTaste.length && !isNotCompatible; j++) {
-				for (let k = 0; k < user.musicTaste.length; k++) {
-					if (comparedUser.musicTaste[j] === user.musicTaste[k]) {
+			let userTaste = [ ...user.musicTaste ];
+			let user2Taste = [ ...comparedUser.musicTaste ];
+			for (let j = 0; j < userTaste.length && !isNotCompatible; j++) {
+				for (let k = 0; k < user2Taste.length; k++) {
+					if (user2Taste[j] === userTaste[k]) {
 						compatibilityScore++;
-						console.log(
-							comparedUser.socket.id + ' and ' + user.socket.id + ' loves ' + comparedUser.musicTaste[j]
-						);
+						console.log(comparedUser.socket.id + ' and ' + user.socket.id + ' loves ' + userTaste[j]);
+						userTaste.splice(j, 1);
+						user2Taste.splice(k, 1);
+
+						j--;
+						k--;
 					}
 				}
 				isNotCompatible = j > TasteReqierd && compatibilityScore < TasteReqierd;
 			}
-			if (compatibilityScore === TasteReqierd) {
+			if (compatibilityScore >= TasteReqierd) {
 				console.log('found compatibility of ' + compatibilityScore);
+				//				console.log('(' + compatibilityScore / this.users.musicTaste.length * 100 + '%)');
 
-				this.usersWaiting.splice(i, i + 1);
+				this.usersWaiting.splice(i, 1);
 				return comparedUser;
 			}
 		}

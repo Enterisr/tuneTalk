@@ -271,6 +271,9 @@ class EntireChat extends React.Component {
 				<Sound
 					url="http://www.sounds.beachware.com/2illionzayp3may/jspjrz/BLOOP.mp3"
 					playStatus={this.state.playAudio}
+					onFinishedPlaying={() => {
+						this.setState({ playAudio: 'STOPPED' });
+					}}
 				/>
 				{this.renderChatBody()}
 				{this.renderWriter()}
