@@ -5,9 +5,39 @@ import autoBind from 'react-autobind';
 import moment from 'moment';
 import Sound from 'react-sound';
 import ChatBody from '../ChatBody/ChatBody';
-
+import { withRouter } from 'react-router-dom';
 function Title(props) {
-	return <div id="title"> {props.value}</div>;
+	let val = props.value;
+	if (val !== 'searching') return <div id="title"> {props.value}</div>;
+	else {
+		return (
+			<div id="title">
+				{' '}
+				{props.value}
+				<span
+					style={{
+						animation: 'text-pop-up-bottom .7s linear 1s  infinite both'
+					}}
+				>
+					.
+				</span>
+				<span
+					style={{
+						animation: 'text-pop-up-bottom .7s  linear 2s infinite both'
+					}}
+				>
+					.
+				</span>
+				<span
+					style={{
+						animation: 'text-pop-up-bottom .7s linear 3s infinite both'
+					}}
+				>
+					.
+				</span>
+			</div>
+		);
+	}
 }
 class SendButton extends React.Component {
 	constructor(props) {
@@ -69,15 +99,15 @@ class Writer extends React.Component {
 }
 
 class EntireChat extends React.Component {
-	constructor(props) {
-		super(props);
+	constructor(props, context) {
+		super(props, context);
 		this.state = {
 			inputValue: 'something sweet',
 			chatLog: [],
 			chatLogOwnerShip: [],
 			servereq: 'none',
 			socket: io('/my-namespace'),
-			roomID: 'searching...',
+			roomID: 'searching',
 			canWrite: false,
 			backgroundURL: ' ',
 			playAudio: 'STOPPED',
@@ -120,6 +150,9 @@ class EntireChat extends React.Component {
 			let authToken = url.searchParams.get('access_token');
 			this.state.socket.emit('auth', authToken);
 		});
+		this.state.socket.on('disconnect', () => {
+			this.props.history.push('/');
+		});
 		this.state.socket.on('enteredRoom', (msg) => {
 			this.setState({
 				roomID: msg.roomID,
@@ -128,21 +161,6 @@ class EntireChat extends React.Component {
 					backgroundImage: 'url("' + msg.backgroundImage.url + '")'
 				}
 			});
-			fetch('/api/CoverArt', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'text/HTML'
-				}
-			})
-				.then((data) => data.json())
-				.then((URLobject) => {
-					console.log(URLobject.backgroundURL.url);
-					this.setState({
-						style: {
-							backgroundImage: 'url("' + URLobject.backgroundURL.url + '")'
-						}
-					});
-				});
 		});
 
 		this.state.socket.on('roomEmpty', (msg) => {
@@ -169,13 +187,13 @@ class EntireChat extends React.Component {
 	}
 	AppendMessage(val, time, owner) {
 		const chat = this.state.chatLog.slice();
-		let WholeDiv = (
+		/* Let WholeDiv = (
 			<div>
 				<div className="timeStyle">{time}</div>
 				<div>{val}</div>
 			</div>
-		);
-		chat.push(WholeDiv);
+		); */
+		chat.push({ value: val, time: time });
 		const chatO = this.state.chatLogOwnerShip.slice();
 		chatO.push(owner);
 		this.setState({ chatLog: chat });
@@ -213,7 +231,7 @@ class EntireChat extends React.Component {
 			<div id="reactWrap" style={this.state.style} onKeyPress={this.HandleKeyPress}>
 				<Title value={this.state.roomID} />
 				<Sound
-					url="http://www.sounds.beachware.com/2illionzayp3may/jspjrz/BLOOP.mp3"
+					url="http://www.sounds.beachware.com/2illionzayp3may/jspjrz/BLOOP.mp3" //TODO: NOT GOOD!
 					playStatus={this.state.playAudio}
 					onFinishedPlaying={() => {
 						this.setState({ playAudio: 'STOPPED' });

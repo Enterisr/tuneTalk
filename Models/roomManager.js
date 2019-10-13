@@ -106,7 +106,6 @@ class RoomManager {
 	}
 	SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 1) {
 		for (let i = 0; i < this.usersWaiting.length; i++) {
-			//TODO: SPILCE EVERY TIME FOUND ZEBRE, TO SHORTEN THE LOOP;
 			let comparedUser = this.usersWaiting[i];
 			let compatibilityScore = 0;
 			let isNotCompatible = false;
