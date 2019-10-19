@@ -115,7 +115,7 @@ class Home extends React.Component {
 					{this.state.openingSentence}
 				</h4>
 				<div class="desc">
-					<p>change you're nickname and dissappear into the night:</p>
+					<p>change your nickname and disappear into the night:</p>
 					<input
 						onChange={(evt) => this.setState({ nickName: evt.target.value })}
 						className="nicknameInput"
