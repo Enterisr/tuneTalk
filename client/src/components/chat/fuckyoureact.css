@@ -119,11 +119,13 @@ div {
 	background-color: #fff;
 	border: solid 1px #75c2b1;
 	font-size: 1rem;
-
+	transition: ease .2s;
 	flex-grow: 2;
 }
 #Writer input:focus {
-	background-color: #b5ebd4;
+	BORDER: NONE;
+	BOX-SHADOW: 0PX 3PX 0PX #16ff9e;
+	OUTLINE: NONE;
 }
 .activeButton {
 	background-color: #00000094;

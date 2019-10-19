@@ -34,6 +34,7 @@ class Home extends React.Component {
 				'for here, am i sitting in a tin can',
 				'johnny b quiet! im trying to chat with strangers!',
 				'while you entering, pass the beer',
+				'let the sunshine in (and stub it with sharp object)',
 				"ain't no rest for naked!",
 				"traps are gay! (but it's fine really)",
 				'beware of all the cyber aids out there',
