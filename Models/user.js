@@ -16,6 +16,7 @@ class User {
 		connectedIn,
 		spotifyAcssesToken,
 		roomManager,
+		nickName,
 		spotifyID = 'notConnected',
 		socketID = 'notConnected'
 	) {
@@ -24,6 +25,7 @@ class User {
 		this.roomID = -1;
 		this.roomManager = roomManager;
 		this.spotifyID = spotifyID;
+		this.nickName = nickName;
 		this.socket = 'not bined yet';
 		this.access_token = spotifyAcssesToken;
 		this.favArtists = -1;
@@ -73,7 +75,11 @@ class User {
 	JoinRoom(roomName, roomBacground) {
 		this.socket.join(roomName, () => {
 			this.roomID = roomName;
-			this.socket.emit('enteredRoom', { roomID: this.roomID, backgroundImage: roomBacground });
+			this.socket.emit('enteredRoom', {
+				roomID: this.roomID,
+				backgroundImage: roomBacground,
+				chatterNick: this.chatter.nickName
+			});
 		});
 	}
 	keepLooking() {

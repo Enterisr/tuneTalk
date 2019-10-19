@@ -5,6 +5,7 @@ import autoBind from 'react-autobind';
 import moment from 'moment';
 import Sound from 'react-sound';
 import ChatBody from '../ChatBody/ChatBody';
+
 import { withRouter } from 'react-router-dom';
 function Title(props) {
 	let val = props.value;
@@ -155,7 +156,7 @@ class EntireChat extends React.Component {
 		});
 		this.state.socket.on('enteredRoom', (msg) => {
 			this.setState({
-				roomID: msg.roomID,
+				roomID: msg.chatterNick,
 				canWrite: true,
 				style: {
 					backgroundImage: 'url("' + msg.backgroundImage.url + '")'

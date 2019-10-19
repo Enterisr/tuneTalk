@@ -15,6 +15,7 @@ const rm = new RoomManager('name', io);
 const nsp = io.of('/my-namespace');
 var cors = require('cors');
 var cookieParser = require('cookie-parser');
+let uncooperativeShitCount = 0;
 var client_id = '072359457f254ab1b168ae2643926e38'; // Your client id
 var client_secret = '53c148b3c9434846bec6bc7238957728'; // Your secret
 let redirect_uri = port.toString().includes('5000') //dev
@@ -28,7 +29,9 @@ app.use(express.static('./public')).use(cors()).use(cookieParser());
 app.get('/newHere', (req, res) => {
 	var state = generateRandomString(16);
 	res.cookie('spotify_auth_state', state);
-
+	let nickName = req.query.nickname;
+	nickName = nickName ? nickName : 'anon ' + uncooperativeShitCount++;
+	res.cookie('nickName', nickName);
 	var scope = 'user-read-private user-read-email user-top-read';
 	res.redirect(
 		'https://accounts.spotify.com/authorize?' +
@@ -57,9 +60,11 @@ app.get('/callback', async function(req, res) {
 		json: true
 	};
 	let user = '';
+	let nickName = req.cookies.nickName;
 	request.post(authOptions, async function(error, response, body) {
 		var access_token = body.access_token;
-		user = new User(req.ip, new moment(), access_token, rm);
+
+		user = new User(req.ip, new moment(), access_token, rm, nickName);
 		rm.usersAuthing.push(user);
 		await user.ConnectToSpotify();
 		let uri = process.env.FRONTEND_URI || 'http://192.168.1.102:3000';
