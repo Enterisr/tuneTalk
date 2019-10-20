@@ -14,7 +14,7 @@ class Home extends React.Component {
 		this.state = {
 			rightHref: href,
 			nickName: null,
-			newUser: false,
+			newUser: true,
 			userSrvCity: '',
 			openingSentence: '',
 			openingSentences: [
@@ -41,7 +41,7 @@ class Home extends React.Component {
 				'are you riding? put the phone down!!!',
 				'layla, you got me on my bees',
 				"knockin' on heaven's bore",
-				'Like a rolling jhon',
+				'Like a rolling jon',
 				'kiki, do you like and respect me in an aplatonic way?',
 				'the thrill is gone! but the strangers still here :)',
 				'smells like teen. ',
@@ -54,14 +54,13 @@ class Home extends React.Component {
 	componentWillMount() {
 		let isNewUser = localStorage.getItem('isNewUser');
 		if (isNewUser == 'false') {
-			this.setState({ isNewUser: false });
+			this.setState({ newUser: false });
 			let name = localStorage.getItem('nickname');
 			if (name) {
 				this.setState({ nickName: name });
 			}
 			this.setState({ openingSentence: this.pickRandomSentence() });
 		}
-		localStorage.setItem('isNewUser', false);
 	}
 	async GetLocationByIp() {
 		return await fetch('http://ip-api.com/json').then((data) => {
@@ -70,9 +69,10 @@ class Home extends React.Component {
 		});
 	}
 	renderNewUserScreen() {
+		localStorage.setItem('isNewUser', false);
 		return (
 			<div id="wrapHome">
-				<h2>Are you the new guy?</h2>
+				<h2 className="subTitle">Are you the new guy?</h2>
 				<img width="400px" src={image} />
 
 				<div class="desc">
@@ -94,8 +94,18 @@ class Home extends React.Component {
 						window.location.href = this.state.rightHref;
 					}}
 				>
-					{' '}
-					get me in!
+					<img
+						style={{
+							width: '1em',
+							position: 'relative',
+							zIndex: 0,
+							left: 0,
+							top: '.2em',
+							marginRight: '.3EM'
+						}}
+						src="/spotifyLogo.png"
+					/>
+					sub now!
 				</button>
 			</div>
 		);

@@ -37,9 +37,10 @@ input.nicknameInput:focus {
 	color: #fff;
 	background-color: #2d6f57;
 	box-shadow: 0px 0px 29px -13px #37b16a;
-	padding: 1em;
+	padding: 0 1em;
 	line-height: 0;
 	border-radius: 12px;
+
 	/*! border: solid #e4e4e4 3px; */
 	cursor: pointer;
 	font-size: 1em;
