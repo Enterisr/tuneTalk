@@ -60,6 +60,8 @@ class User {
 		});
 		this.socket.on('disconnect', () => {
 			console.log('bye faggot!');
+			console.info(this.nickName + ' left ' + this.chatter.nickName + ' alone');
+
 			this.socket.to(this.roomID).emit('roomEmpty');
 			this.roomManager.DeleteUser(this);
 			if (this.chatter) this.roomManager.SearchRoom(this.chatter);

@@ -94,6 +94,7 @@ class RoomManager {
 			compatibeUser.chatter = user;
 			user.JoinRoom('room-' + this.LastRoomID, roomBackground);
 			compatibeUser.JoinRoom('room-' + this.LastRoomID, roomBackground);
+			console.info(user.nickName + ' was connected with ' + compatibeUser.nickName);
 
 			let thisRoom = this.LastRoomID;
 			this.LastRoomID++;
