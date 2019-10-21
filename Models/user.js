@@ -58,6 +58,9 @@ class User {
 		this.socket.on('New message', (msg) => {
 			this.socket.to(this.roomID).emit('New message', msg, moment().format('HH:mm:ss'));
 		});
+		this.socket.on('typing', () => {
+			this.socket.to(this.roomID).emit('typing');
+		});
 		this.socket.on('disconnect', () => {
 			console.log('bye faggot!');
 			console.info(this.nickName + ' left ' + this.chatter.nickName + ' alone');

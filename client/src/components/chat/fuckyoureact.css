@@ -190,8 +190,8 @@ div {
 }
 @media screen and (max-width: 700px) {
 	.OtherMessageStyle {
-		max-width: 30%;
-		left: 66%;
+		max-width: 50%;
+		left: 45%;
 		/*  background-color: #16ff9e;
 color: #052c4e;
 border-radius: 15px;

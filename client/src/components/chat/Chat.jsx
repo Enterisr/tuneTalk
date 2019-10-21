@@ -2,11 +2,12 @@ import React from 'react';
 import './fuckyoureact.css';
 import io from 'socket.io-client';
 import autoBind from 'react-autobind';
-import moment from 'moment';
+import moment, { duration } from 'moment';
 import Sound from 'react-sound';
 import ChatBody from '../ChatBody/ChatBody';
 
 import { withRouter } from 'react-router-dom';
+import { interval } from 'rxjs';
 function Title(props) {
 	let val = props.value;
 	if (val !== 'searching') return <div id="title"> {props.value}</div>;
@@ -111,6 +112,7 @@ class EntireChat extends React.Component {
 			roomID: 'searching',
 			canWrite: false,
 			backgroundURL: ' ',
+			isTheOtherUserTyping: false,
 			playAudio: 'STOPPED',
 			style: {
 				backgroundImage: "url('')" /*"url(" + this.state.backgroundURL + ")"*/
@@ -163,6 +165,12 @@ class EntireChat extends React.Component {
 				}
 			});
 		});
+		this.state.socket.on('typing', () => {
+			this.setState({ isTheOtherUserTyping: true });
+			this.timer = setTimeout(() => {
+				this.setState({ isTheOtherUserTyping: false });
+			}, 3000);
+		});
 
 		this.state.socket.on('roomEmpty', (msg) => {
 			this.setState({
@@ -209,6 +217,7 @@ class EntireChat extends React.Component {
 	}
 	onTextEdit(inputValue) {
 		this.setState({ inputValue: inputValue });
+		this.state.socket.emit('typing');
 	}
 	renderWriter() {
 		return (
@@ -230,7 +239,9 @@ class EntireChat extends React.Component {
 	render() {
 		return (
 			<div id="reactWrap" style={this.state.style} onKeyPress={this.HandleKeyPress}>
-				<Title value={this.state.roomID} />
+				<Title
+					value={this.state.isTheOtherUserTyping ? this.state.roomID + ' is typing...' : this.state.roomID}
+				/>
 				<Sound
 					url="http://www.sounds.beachware.com/2illionzayp3may/jspjrz/BLOOP.mp3" //TODO: NOT GOOD!
 					playStatus={this.state.playAudio}
