@@ -57,6 +57,12 @@ class RoomManager {
 		this.users = this.users.filter((cuser, idx) => {
 			return cuser.socket.id !== user.socket.id;
 		});
+		if (user.isWaiting) {
+			this.usersWaiting = this.usersWaiting.filter((cuser, idx) => {
+				return cuser.socket.id !== user.socket.id;
+			});
+		}
+		console.log(this.users.length + ' users left');
 	}
 	RoomIsWaiting(user) {
 		let Open_room = false;
@@ -102,6 +108,8 @@ class RoomManager {
 		} else {
 			this.usersWaiting.push(user);
 			user.keepLooking();
+
+			console.log(this.usersWaiting.length + ' users waiting');
 			return false;
 		}
 	}

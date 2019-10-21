@@ -49,6 +49,7 @@ class User {
 		this.spotifyID = userStats.data.id;
 		this.favArtists = favArtists.data.items;
 		this.backgroundImage = this.favArtists[0].images[0];
+		this.isWaiting = false;
 		this.musicTaste = this.GetGeneresFromArtists();
 		return 'yessss';
 	}
@@ -88,6 +89,8 @@ class User {
 		});
 	}
 	keepLooking() {
+		this.isWaiting = true;
+		this.chatter = false;
 		console.log('keep looking you snowflake asshole-' + this.socket.id);
 	}
 }
