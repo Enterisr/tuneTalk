@@ -36,13 +36,7 @@ class RoomManager {
 			idxToRemove = idx;
 			return user.access_token === auth;
 		});
-		/*		if (user === 'undefined') {
-			user = this.users.find((user, idx) => {
-				isNewUser = false;
-				idxToRemove = idx;
-				return user.access_token === auth;
-			});
-		}*/
+
 		if (typeof user !== 'undefined' /*&& isNewUser)*/) {
 			this.usersAuthing.splice(idxToRemove, ++idxToRemove);
 			this.users.push(user);

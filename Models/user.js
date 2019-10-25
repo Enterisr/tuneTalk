@@ -30,6 +30,7 @@ class User {
 		this.access_token = spotifyAcssesToken;
 		this.favArtists = -1;
 		this.chatter = '';
+		this.hasActualTaste = false;
 	}
 
 	async ConnectToSpotify() {
@@ -48,7 +49,127 @@ class User {
 		]);
 		this.spotifyID = userStats.data.id;
 		this.favArtists = favArtists.data.items;
-		this.backgroundImage = this.favArtists[0].images[0];
+		if (this.favArtists.length > 0) {
+			this.backgroundImage = this.favArtists[0].images[0];
+			this.hasActualTaste = true;
+		} else {
+			/* await axios.get('https://api.spotify.com/v1/artists', {
+				//some random shit to users with empty spotify account.
+				headers: { Authorization: 'Bearer ' + this.access_token },
+				ids: '0gxyHStUsqpMadRV0Di1Qt,0PFtn5NtBbbUNbU9EAmIWF,7hJcb9fa4alzcOq3EaNPoG'
+			});*/ this.favArtists = [
+				{
+					external_urls: {
+						spotify: 'https://open.spotify.com/artist/0gxyHStUsqpMadRV0Di1Qt'
+					},
+					followers: {
+						href: null,
+						total: 452908
+					},
+					genres: [
+						'dance pop',
+						'dance rock',
+						'disco',
+						'europop',
+						'new romantic',
+						'new wave',
+						'new wave pop',
+						'soft rock'
+					],
+					href: 'https://api.spotify.com/v1/artists/0gxyHStUsqpMadRV0Di1Qt',
+					id: '0gxyHStUsqpMadRV0Di1Qt',
+					images: [
+						{
+							height: 640,
+							url: 'https://i.scdn.co/image/123732b665ec9be0bc8d0d55283aa2ba579304d5',
+							width: 640
+						},
+						{
+							height: 320,
+							url: 'https://i.scdn.co/image/e0da19ac0df629fa59b53f5c06457b51fdf636a5',
+							width: 320
+						},
+						{
+							height: 160,
+							url: 'https://i.scdn.co/image/1fc6550292a3a8770b8d372f46702b35debb28d5',
+							width: 160
+						}
+					],
+					name: 'Rick Astley',
+					popularity: 66,
+					type: 'artist',
+					uri: 'spotify:artist:0gxyHStUsqpMadRV0Di1Qt'
+				},
+				{
+					external_urls: {
+						spotify: 'https://open.spotify.com/artist/0PFtn5NtBbbUNbU9EAmIWF'
+					},
+					followers: {
+						href: null,
+						total: 1213637
+					},
+					genres: [ 'album rock', 'mellow gold', 'rock', 'soft rock', 'yacht rock' ],
+					href: 'https://api.spotify.com/v1/artists/0PFtn5NtBbbUNbU9EAmIWF',
+					id: '0PFtn5NtBbbUNbU9EAmIWF',
+					images: [
+						{
+							height: 640,
+							url: 'https://i.scdn.co/image/a47fe4b4087afd805a6e40730023b5d182423990',
+							width: 640
+						},
+						{
+							height: 320,
+							url: 'https://i.scdn.co/image/83fcf2c20ec747118b954242691499aa3cbfb202',
+							width: 320
+						},
+						{
+							height: 160,
+							url: 'https://i.scdn.co/image/f013f3bdc61ec18986d4f9e411689fd28b19a013',
+							width: 160
+						}
+					],
+					name: 'TOTO',
+					popularity: 75,
+					type: 'artist',
+					uri: 'spotify:artist:0PFtn5NtBbbUNbU9EAmIWF'
+				},
+				{
+					external_urls: {
+						spotify: 'https://open.spotify.com/artist/7hJcb9fa4alzcOq3EaNPoG'
+					},
+					followers: {
+						href: null,
+						total: 5181337
+					},
+					genres: [ 'g funk', 'gangster rap', 'hip hop', 'pop rap', 'rap', 'west coast rap' ],
+					href: 'https://api.spotify.com/v1/artists/7hJcb9fa4alzcOq3EaNPoG',
+					id: '7hJcb9fa4alzcOq3EaNPoG',
+					images: [
+						{
+							height: 640,
+							url: 'https://i.scdn.co/image/11208d65843456cf3854717b8e411ef8fede7141',
+							width: 640
+						},
+						{
+							height: 320,
+							url: 'https://i.scdn.co/image/4ddba58867285a1e858291a108613526df2ce934',
+							width: 320
+						},
+						{
+							height: 160,
+							url: 'https://i.scdn.co/image/1e67815be9174e75753d52a006b86077a39719cf',
+							width: 160
+						}
+					],
+					name: 'Snoop Dogg',
+					popularity: 84,
+					type: 'artist',
+					uri: 'spotify:artist:7hJcb9fa4alzcOq3EaNPoG'
+				}
+			];
+
+			this.backgroundImage = this.favArtists[0].images[0];
+		}
 		this.isWaiting = false;
 		this.musicTaste = this.GetGeneresFromArtists();
 		return 'yessss';
@@ -56,6 +177,9 @@ class User {
 
 	BindToSocket(socket) {
 		this.socket = socket;
+		if (!this.hasActualTaste) {
+			this.socket.emit('noActualTaste');
+		}
 		this.socket.on('New message', (msg) => {
 			this.socket.to(this.roomID).emit('New message', msg, moment().format('HH:mm:ss'));
 		});

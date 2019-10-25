@@ -5,9 +5,9 @@ import autoBind from 'react-autobind';
 import moment, { duration } from 'moment';
 import Sound from 'react-sound';
 import ChatBody from '../ChatBody/ChatBody';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { withRouter } from 'react-router-dom';
-import { interval } from 'rxjs';
 function Title(props) {
 	let val = props.value;
 	if (val !== 'searching') return <div id="title"> {props.value}</div>;
@@ -103,6 +103,7 @@ class Writer extends React.Component {
 class EntireChat extends React.Component {
 	constructor(props, context) {
 		super(props, context);
+		toast.configure();
 		this.state = {
 			inputValue: 'something sweet',
 			chatLog: [],
@@ -178,6 +179,14 @@ class EntireChat extends React.Component {
 				chatLog: [],
 				chatLogOwnerShip: [],
 				canWrite: false
+			});
+		});
+		this.state.socket.on('noActualTaste', () => {
+			toast("we didn't caught your musical taste, so we picked one for you! ❤️", {
+				draggablePercent: 60,
+				autoClose: 3000,
+				hideProgressBar: true,
+				type: 'error'
 			});
 		});
 	}
