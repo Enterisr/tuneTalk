@@ -157,7 +157,6 @@ class EntireChat extends React.Component {
 			this.props.history.push('/');
 		});
 		this.state.socket.on('enteredRoom', (msg) => {
-			alert(msg.chatterNick);
 			this.setState({
 				roomID: msg.chatterNick,
 				canWrite: true,
