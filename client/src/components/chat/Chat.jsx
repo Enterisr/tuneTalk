@@ -165,6 +165,7 @@ class EntireChat extends React.Component {
 				}
 			});
 		});
+		//
 		this.state.socket.on('typing', () => {
 			this.setState({ isTheOtherUserTyping: true });
 			this.timer = setTimeout(() => {
