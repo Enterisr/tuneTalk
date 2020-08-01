@@ -5,23 +5,25 @@ const User = require('./Models/user');
 //const RoomManager = require('./Models/roomManager');
 const moment = require('moment');
 const app = express();
+require('dotenv').config();
 
 const http = require('http').Server(app);
 const request = require('request'); // "Request" library
 const io = require('socket.io')(http, { origins: '*:*' });
 const port = process.env.PORT || 5000;
-var querystring = require('querystring');
+const querystring = require('querystring');
 const RoomManager = require('./Models/roomManager');
+const TitleBuilder = require('./Models/TitleBuilder/TitleBuilder');
 const rm = new RoomManager('name', io);
+let uncooperativeShitCount = 0;
 const nsp = io.of('/my-namespace');
-var cors = require('cors');
-var cookieParser = require('cookie-parser');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const winston = require('winston');
-let uncooperativeShitCount = 0;
-var client_id = '072359457f254ab1b168ae2643926e38'; // Your client id
-var client_secret = '53c148b3c9434846bec6bc7238957728'; // Your secret
-let redirect_uri = port.toString().includes('5000') //dev
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_SECRET;
+let redirect_uri = port.toString().includes('5000')
 	? 'http://192.168.203.1:5000/callback/'
 	: 'https://tunetalk.herokuapp.com/callback';
 app.use(bodyParser.json());
@@ -32,6 +34,11 @@ app.use(express.static('./public')).use(cors()).use(cookieParser());
 const logger = winston.createLogger({
 	transports: [ new winston.transports.Console(), new winston.transports.File({ filename: 'combined.log' }) ]
 });
+app.post('/getTitle', async (req, res) => {
+	let title = await TitleBuilder.GetTitleForStatus(req.body.appStatus);
+	res.send(title);
+});
+
 app.get('/newHere', (req, res) => {
 	var state = generateRandomString(16);
 	res.cookie('spotify_auth_state', state);
@@ -43,7 +50,7 @@ app.get('/newHere', (req, res) => {
 		'https://accounts.spotify.com/authorize?' +
 			querystring.stringify({
 				response_type: 'code',
-				client_id: client_id,
+				client_id: SPOTIFY_CLIENT_ID,
 				scope: scope,
 				redirect_uri: redirect_uri,
 				state: state
@@ -61,7 +68,7 @@ app.get('/callback', async function(req, res) {
 			grant_type: 'authorization_code'
 		},
 		headers: {
-			Authorization: 'Basic ' + new Buffer(client_id + ':' + client_secret).toString('base64')
+			Authorization: 'Basic ' + new Buffer(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64')
 		},
 		json: true
 	};

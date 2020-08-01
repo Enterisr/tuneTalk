@@ -1,17 +1,15 @@
 {
-	"name": "example-create-react-app-express",
+	"name": "tune-talk",
 	"version": "1.0.0",
-	"description": "Example on using create-react-app with a Node Express Backend",
+	"description": "Match with people based on musical taste",
 	"author": {
-		"name": "Esau Silva",
-		"twitter": "@_esausilva",
-		"url": "https://esausilva.com"
+		"name": "DrunkTolstoy"
 	},
 	"license": "MIT",
 	"scripts": {
 		"client": "cd client && yarn start",
-		"server": " nodemon --inspect server.js",
-		"dev": "concurrently --kill-others-on-fail \"nodemon --inspect server.js\" \"yarn client\"",
+		"server": " nodemon --inspect server/server.js",
+		"dev": "concurrently --kill-others-on-fail \"nodemon --inspect server/server.js\" \"yarn client\"",
 		"dev:server": "cd client && yarn build && cd .. && yarn start",
 		"start": "node --inspect server.js",
 		"start:debug": "node --inspect-brk=5858 ./server.js",
@@ -25,6 +23,7 @@
 		"body-parser": "^1.18.3",
 		"cookie-parser": "^1.4.4",
 		"cors": "^2.8.5",
+		"dotenv": "^8.2.0",
 		"eslint-cli": "^1.1.1",
 		"express": "^4.16.4",
 		"flat": "^4.1.0",
@@ -53,9 +52,5 @@
 	"bugs": {
 		"url": "https://github.com/esausilva/example-create-react-app-express/issues"
 	},
-	"keywords": [
-		"node",
-		"express",
-		"create-react-app"
-	]
+	"keywords": [ "node", "express", "create-react-app" ]
 }

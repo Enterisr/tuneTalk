@@ -161,33 +161,6 @@ class RoomManager {
 				})
 		);
 	}
-	/*	DisconectUserFromRoom(user) {
-		let Selectedroom = '';
-		this.rooms.forEach((room) => {
-			if (room.roomID == user.roomID) {
-				Selectedroom = room;
-			}
-		});
-		Selectedroom.DisconnectUser(user.socket);
-	}
-	/*Switchboard(user) {
-		// let user = user;
-		let room = this.RoomIsWaiting(user);
-		if (!room && user.roomID == -1) {
-			room = this.NewRoom(user);
-			room.ConnectUser(user);
-		} else if (user.roomID != -1 && !room) {
-			//wait
-		} else if (user.roomID != -1 && room) {
-			//wait and delete your room
-			this.DisconectUserFromRoom(user);
-			room.ConnectUser(user);
-		} else {
-			room.ConnectUser(user);
-		}
-
-		return room;
-	}*/
 }
 
 module.exports = RoomManager;
