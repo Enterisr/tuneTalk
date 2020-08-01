@@ -11,7 +11,7 @@
 		"server": " nodemon --inspect server/server.js",
 		"dev": "concurrently --kill-others-on-fail \"nodemon --inspect server/server.js\" \"yarn client\"",
 		"dev:server": "cd client && yarn build && cd .. && yarn start",
-		"start": "node --inspect server.js",
+		"start": "node --inspect server/server.js",
 		"start:debug": "node --inspect-brk=5858 ./server.js",
 		"debug": "nodemon --inspect ./bin/www",
 		"kill": "taskkill /im node.exe /F",
