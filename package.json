@@ -52,5 +52,9 @@
 	"bugs": {
 		"url": "https://github.com/esausilva/example-create-react-app-express/issues"
 	},
-	"keywords": [ "node", "express", "create-react-app" ]
+	"keywords": [
+		"node",
+		"express",
+		"create-react-app"
+	]
 }

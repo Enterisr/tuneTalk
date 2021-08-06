@@ -1,101 +1,104 @@
 div {
-	margin: 0;
+  margin: 0;
 }
 
 input.nicknameInput:focus {
-	box-shadow: 2px 7px 2px -7px #008ac3, inset 0px 5px 8px -7px #16ff9e;
-	background: #00000078;
-	padding: .7em;
-	margin: .8em;
+  box-shadow: 2px 7px 2px -7px #008ac3, inset 0px 5px 8px -7px #16ff9e;
+  background: #00000078;
+  padding: 0.7em;
+  margin: 0.8em;
 }
 
 .nicknameInput {
-	width: 11em;
-	text-align: center;
-	background: #00000014;
-	outline: none;
-	border: none;
-	font-size: 1em;
-	color: white;
-	border-radius: .5em;
-	margin: 1em;
-	font-family: 'Karla', sans-serif;
-	padding: .5em;
-	transition: ease all .2s;
+  width: 11em;
+  text-align: center;
+  background: #00000014;
+  outline: none;
+  border: none;
+  font-size: 1em;
+  color: white;
+  border-radius: 0.5em;
+  margin: 1em;
+  font-family: "Karla", sans-serif;
+  padding: 0.5em;
+  transition: ease all 0.2s;
 }
 #wrapHome > button {
-	color: #fff;
-	background-color: #2d6f57;
-	box-shadow: 0px 0px 29px -13px #37b16a;
-	padding: 0 1em;
-	line-height: 0;
-	border-radius: 12px;
-
-	/*! border: solid #e4e4e4 3px; */
-	cursor: pointer;
-	font-size: 1em;
-	-webkit-transition: all ease .2s;
-	transition: all ease .2s;
-	font-weight: 100;
-	flex-grow: 3;
-	max-height: 2em;
-	align-self: center;
-	background: -webkit-linear-gradient(right, #49bd69, #2d6f57);
-	background: -webkit-gradient(linear, right top, left top, from(#49bd69), to(#2d6f57));
-	background: linear-gradient(to left, #49bd69, #2d6f57);
-	outline: none;
-	border: none;
+  color: #fff;
+  background-color: #2d6f57;
+  box-shadow: 0px 0px 29px -13px #37b16a;
+  padding: 0 1em;
+  line-height: 0;
+  font-family: "Titillium Web";
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all ease 0.2s;
+  font-weight: 100;
+  flex-grow: 3;
+  max-height: 2em;
+  align-self: center;
+  background: linear-gradient(to left, #49bd69, #2d6f57);
+  outline: none;
+  border: none;
 }
 
 .subTitle {
-	/*! flex-grow: 2; */
-	background: -webkit-linear-gradient(left, #00ff6a, #003cff);
-	background: -webkit-gradient(linear, left top, right top, from(#00ff6a), to(#003cff));
-	background: linear-gradient(to right, #00ff6a, #003cff);
-	-webkit-background-clip: text;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
-	-webkit-box-decoration-break: clone;
-	box-decoration-break: clone;
-	text-shadow: none;
-	font-size: 10vh;
-	margin: 0vh;
+  /*! flex-grow: 2; */
+  background: -webkit-linear-gradient(left, #00ff6a, #003cff);
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#00ff6a),
+    to(#003cff)
+  );
+  background: linear-gradient(to right, #00ff6a, #003cff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  text-shadow: none;
+  font-size: 10vh;
+  margin: 0vh;
 }
 #h4 {
-	font-size: 5vh;
+  font-size: 5vh;
 }
 
 #wrapHome > button:hover {
-	/*! border:solid transparent 3px; */
-	box-shadow: 0 -7px 24px -12px #33c8ff;
+  /*! border:solid transparent 3px; */
+  box-shadow: 0 -7px 24px -12px #33c8ff, 0 7px 30px -12px #33ff70,
+    0px 0px 1px 3px;
 }
 
 #wrapHome > img {
-	justify-self: center;
-	align-self: center;
-	flex-grow: 0;
-	width: 50vh;
+  justify-self: center;
+  align-self: center;
+  flex-grow: 0;
+  width: 50vh;
 }
 
 #wrapHome > .desc {
-	font-size: 2vh;
-	box-shadow: 0px 0px 0px 2px #a8ffff;
-	background-color: #323332;
-	padding: 1.2em;
-	width: 100%;
-	font-family: 'Karla', sans-serif;
-	color: white;
-	background: linear-gradient(#323332, #a8ffff38);
-	margin: 0 auto;
-	width: 45vw;
+  font-size: 2vh;
+  box-shadow: 0px 0px 0px 2px #a8ffff;
+  background-color: #323332;
+  padding: 1.2em;
+  width: 100%;
+  font-family: "Karla", sans-serif;
+  color: white;
+  background: linear-gradient(#323332, #a8ffff38);
+  margin: 0 auto;
+  width: 45vw;
 }
 
 #wrapHome {
-	display: flex;
-	justify-content: space-evenly;
-	flex-direction: column;
-	height: 100vh;
-	background-color: #323332;
-	font-size: 2em;
-	margin: -3px;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #323332;
+  font-size: 2em;
+  margin: -3px;
 }
