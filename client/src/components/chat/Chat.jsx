@@ -4,10 +4,10 @@ import io from "socket.io-client";
 import autoBind from "react-autobind";
 import moment, { duration } from "moment";
 import Sound from "react-sound";
-import ChatBody from "../ChatBody/ChatBody";
+import ChatBody from "./ChatBody/ChatBody";
 import cogoToast from "cogo-toast";
-import Title from "../Title/Title.js";
-import Writer from "../Writer/Writer.js";
+import Title from "./ChatTitle/Title.js";
+import Writer from "./Writer/Writer.js";
 class EntireChat extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -17,7 +17,7 @@ class EntireChat extends React.Component {
       chatLogOwnerShip: [],
       servereq: "none",
       socket: io("/my-namespace"),
-      roomID: "-1",
+      otherUser: { nickName: "" },
       canWrite: false,
       backgroundURL: " ",
       isTheOtherUserTyping: false,
@@ -59,22 +59,27 @@ class EntireChat extends React.Component {
     });
     this.state.socket.on("connect", () => {
       let url = new URL(window.location.href);
-      let authToken = url.searchParams.get("access_token");
-      this.state.socket.emit("auth", authToken);
+      let access_token = url.searchParams.get("access_token");
+      this.state.socket.emit("access_token", access_token);
     });
     this.state.socket.on("disconnect", () => {
       this.props.history.push("/");
     });
-    this.state.socket.on("enteredRoom", (msg) => {
-      this.setState({
-        roomID: msg.chatterNick,
-        chatState: "enteredRoom",
-        canWrite: true,
-        inputValue: "You have a great taste!",
-        style: {
-          backgroundImage: 'url("' + msg.backgroundImage.url + '")',
+    this.state.socket.on("enteredRoom", ({ otherUser, sharedArtist }) => {
+      this.setState(
+        {
+          otherUser,
+          chatState: "enteredRoom",
+          canWrite: true,
+          inputValue: "You have a great taste!",
+          style: {
+            backgroundImage: 'url("' + sharedArtist.images[0].url + '")',
+          },
         },
-      });
+        () => {
+          cogoToast.success("You both like: " + sharedArtist.name);
+        }
+      );
     });
     //
     this.state.socket.on("typing", () => {
@@ -89,7 +94,7 @@ class EntireChat extends React.Component {
 
     this.state.socket.on("roomEmpty", (msg) => {
       this.setState({
-        roomID: "-1",
+        otherUser: {},
         chatState: "roomEmpty",
         chatLog: [],
         chatLogOwnerShip: [],
@@ -149,11 +154,11 @@ class EntireChat extends React.Component {
         <Title
           value={
             this.state.isTheOtherUserTyping
-              ? this.state.roomID + " is typing..."
-              : this.state.roomID
+              ? this.state.otherUser.nickName + " is typing..."
+              : this.state.otherUser.nickName
           }
           chatState={this.state.chatState}
-          otherUser={this.state.roomID}
+          otherUser={this.state.otherUser}
         />
 
         <ChatBody

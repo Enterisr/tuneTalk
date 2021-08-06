@@ -1,9 +1,7 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const User = require("./Models/user");
-//const RoomManager = require('./Models/roomManager');
-const moment = require("moment");
+
 const app = express();
 require("dotenv").config();
 
@@ -18,7 +16,6 @@ const nsp = io.of("/my-namespace");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const winston = require("winston");
-const { rm } = require("fs");
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_SECRET;
 const prodURI = require("./CONSTS").productionURI;
@@ -48,6 +45,7 @@ app.get("/newHere", (req, res) => {
 
 app.get("/callback", async function (req, res) {
   let code = req.query.code || null;
+  let user = roomManager.usersAuthing.find((u) => req.query.state === u.id);
   let authOptions = {
     url: "https://accounts.spotify.com/api/token",
     form: {
@@ -64,36 +62,33 @@ app.get("/callback", async function (req, res) {
     },
     json: true,
   };
-  let user = "";
-  let nickName = req.cookies.nickName;
   request.post(authOptions, async function (error, response, body) {
     var access_token = body.access_token;
-    user = new User(req.ip, new moment(), access_token, roomManager, nickName);
     let connectedInFormated = user.connectedIn.format("DD/MM/YYYY HH:mm:ss");
+    roomManager.UserAuthed(user, access_token);
+
     logger.info([
       { user: "connected" },
       {
         "ip ": user.ip,
         connectedIn: connectedInFormated,
         token: access_token,
-        nickName: nickName,
       },
     ]);
 
-    roomManager.usersAuthing.push(user);
-    await user.ConnectToSpotify();
+    await user.getSpotifyData();
     let uri = process.env.FRONTEND_URI;
     res.redirect(uri + "/chat?access_token=" + access_token);
   });
 });
 nsp.on("connection", function (socket) {
-  socket.on("auth", function (authToken) {
-    let user = roomManager.BindToSocket(socket, authToken);
+  socket.on("access_token", function (access_token) {
+    let user = roomManager.BindToSocket(socket, access_token);
     if (user) {
       console.log("user socket" + user.socket.id);
       roomManager.SearchRoom(user);
     } else {
-      socket.emit("disconnected");
+      //  socket.emit("disconnected");
     }
   });
 });

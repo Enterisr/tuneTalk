@@ -1,44 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,900;1,400;1,600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Karla:ital@1&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,900;1,400;1,600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Karla:ital@1&display=swap");
 body {
-	background-color: #383a39;
+  background-color: #383a39;
 
-	font-family: 'Titillium Web', sans-serif;
-	overflow-x: hidden !important;
-	margin-top: 0;
-	margin-bottom: 0;
-	margin: 0;
-	overflow: hidden;
+  font-family: "Titillium Web", sans-serif;
+  overflow-x: hidden !important;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin: 0;
+  overflow: hidden;
 }
 .App {
-	text-align: center;
+  text-align: center;
 }
 
 .App-logo {
-	animation: App-logo-spin infinite 20s linear;
-	height: 40vmin;
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
 }
 
 .App-header {
-	background-color: #282c34;
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	font-size: calc(10px + 2vmin);
-	color: white;
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
 .App-link {
-	color: #61dafb;
+  color: #61dafb;
 }
-
+.app-main {
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
 @keyframes App-logo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

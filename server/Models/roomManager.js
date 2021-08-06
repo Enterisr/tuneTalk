@@ -1,7 +1,6 @@
-const User = require("./user");
+let User = require("./user");
 const moment = require("moment");
 const Room = require("./room");
-const utils = require("../utils");
 var querystring = require("querystring");
 require("dotenv").config();
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
@@ -23,16 +22,24 @@ class RoomManager {
     this.usersAuthing = []; //1st prop - auth, 2st - user [{'aasdasda31312',{user object}}]
     this.usersWaiting = [];
   }
-
-  BindToSocket(socket, auth) {
-    let idxToRemove = -1;
-    let user = this.usersAuthing.find((user, idx) => {
-      idxToRemove = idx;
-      return user.access_token === auth;
-    });
-
-    if (typeof user !== "undefined" /*&& isNewUser)*/) {
-      this.usersAuthing.splice(idxToRemove, ++idxToRemove);
+  UserCreated(user) {
+    this.usersAuthing.push(user);
+  }
+  UserAuthed(user, access_token) {
+    let userIDX = this.usersAuthing.findIndex((u) => u.id === user.id);
+    if (userIDX) this.usersAuthing.splice(userIDX, 1);
+    user.access_token = access_token;
+    this.UserWaiting(user);
+  }
+  UserWaiting(user) {
+    user.keepLooking();
+    this.usersWaiting.push(user);
+  }
+  BindToSocket(socket, access_token) {
+    const user = this.usersWaiting.find(
+      (us) => us.access_token === access_token
+    );
+    if (user) {
       this.users.push(user);
       user.BindToSocket(socket);
       return user;
@@ -72,7 +79,7 @@ class RoomManager {
   FindSharedArtist(user, user2) {
     for (let i = 0; i < user.favArtists.length; i++) {
       for (let j = 0; j < user2.favArtists.length; j++) {
-        if (user.favArtists[i].id == user2.favArtists[j].id) {
+        if (user.favArtists[i].id === user2.favArtists[j].id) {
           return user.favArtists[i];
         }
       }
@@ -86,11 +93,10 @@ class RoomManager {
     );
     if (compatibeUser !== null) {
       let sharedArtist = this.FindSharedArtist(user, compatibeUser);
-      const roomBackground = sharedArtist.images[0];
       user.chatter = compatibeUser;
       compatibeUser.chatter = user;
-      user.JoinRoom("room-" + this.LastRoomID, roomBackground);
-      compatibeUser.JoinRoom("room-" + this.LastRoomID, roomBackground);
+      user.JoinRoom("room-" + this.LastRoomID, sharedArtist);
+      compatibeUser.JoinRoom("room-" + this.LastRoomID, sharedArtist);
       console.info(
         user.nickName + " was connected with " + compatibeUser.nickName
       );
@@ -99,50 +105,51 @@ class RoomManager {
       this.LastRoomID++;
       return "room-" + thisRoom;
     } else {
-      this.usersWaiting.push(user);
-      user.keepLooking();
-
       console.log(this.usersWaiting.length + " users waiting");
       return false;
     }
   }
+
   SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 1) {
     for (let i = 0; i < this.usersWaiting.length; i++) {
       let comparedUser = this.usersWaiting[i];
-      let compatibilityScore = 0;
-      let isNotCompatible = false;
-      console.log(user.socket.id + " music taste: " + user.musicTaste);
-      console.log(
-        comparedUser.socket.id + " music taste: " + comparedUser.musicTaste
-      );
-      let userTaste = [...user.musicTaste];
-      let user2Taste = [...comparedUser.musicTaste];
-      for (let j = 0; j < userTaste.length && !isNotCompatible; j++) {
-        for (let k = 0; k < user2Taste.length; k++) {
-          if (user2Taste[j] === userTaste[k]) {
-            compatibilityScore++;
-            console.log(
-              comparedUser.socket.id +
-                " and " +
-                user.socket.id +
-                " loves " +
-                userTaste[j]
-            );
-            userTaste.splice(j, 1);
-            user2Taste.splice(k, 1);
+      if (comparedUser.id !== user.id) {
+        let compatibilityScore = 0;
+        let isNotCompatible = false;
+        console.log(user.socket.id + " music taste: " + user.musicTaste);
+        console.log(
+          comparedUser.socket.id + " music taste: " + comparedUser.musicTaste
+        );
+        let userTaste = [...user.musicTaste];
+        let user2Taste = [...comparedUser.musicTaste];
+        for (let j = 0; j < userTaste.length && !isNotCompatible; j++) {
+          for (let k = 0; k < user2Taste.length; k++) {
+            if (user2Taste[j] === userTaste[k]) {
+              compatibilityScore++;
+              console.log(
+                comparedUser.socket.id +
+                  " and " +
+                  user.socket.id +
+                  " loves " +
+                  userTaste[j]
+              );
+              userTaste.splice(j, 1);
+              user2Taste.splice(k, 1);
 
-            j--;
-            k--;
+              j--;
+              k--;
+            }
           }
+          isNotCompatible =
+            j > TasteReqierd && compatibilityScore < TasteReqierd;
         }
-        isNotCompatible = j > TasteReqierd && compatibilityScore < TasteReqierd;
-      }
-      if (compatibilityScore >= TasteReqierd) {
-        console.log("found compatibility of " + compatibilityScore);
-        //				console.log('(' + compatibilityScore / this.users.musicTaste.length * 100 + '%)');
-
-        this.usersWaiting.splice(i, 1);
-        return comparedUser;
+        if (compatibilityScore >= TasteReqierd) {
+          console.log("found compatibility of " + compatibilityScore);
+          const IDXuser = this.usersWaiting.findIndex((u) => u.id === user.id);
+          this.usersWaiting.splice(IDXuser, 1);
+          this.usersWaiting.splice(i, 1);
+          return comparedUser;
+        }
       }
     }
     if (TasteReqierd > minTasteReqierd) {
@@ -152,13 +159,14 @@ class RoomManager {
     }
   }
   NewEnternce(req, res) {
+    User = require("./user");
     this.userCount++;
-    const state = utils.generateRandomString(16);
-    res.cookie("spotify_auth_state", state);
     let nickName = req.query.nickname;
     nickName = nickName ? nickName : "anon#" + this.userCount;
-    res.cookie("nickName", nickName);
-    var scope = "user-read-private user-read-email user-top-read";
+    const user = new User(req.ip, moment(), undefined, this, nickName);
+    this.UserCreated(user);
+
+    const scope = "user-read-private user-read-email user-top-read";
     res.redirect(
       "https://accounts.spotify.com/authorize?" +
         querystring.stringify({
@@ -166,7 +174,7 @@ class RoomManager {
           client_id: SPOTIFY_CLIENT_ID,
           scope,
           redirect_uri,
-          state,
+          state: user.id,
         })
     );
   }

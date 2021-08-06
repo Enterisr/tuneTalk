@@ -90,6 +90,7 @@ input.nicknameInput:focus {
   color: white;
   background: linear-gradient(#323332, #a8ffff38);
   margin: 0 auto;
+  border-radius: 3px;
   width: 45vw;
 }
 
@@ -97,8 +98,12 @@ input.nicknameInput:focus {
   display: flex;
   justify-content: space-evenly;
   flex-direction: column;
-  height: 100vh;
   background-color: #323332;
   font-size: 2em;
-  margin: -3px;
+  flex-grow: 1;
+}
+@media screen and (max-width: 700px) {
+  .nicknameInput {
+    margin: 0;
+  }
 }
