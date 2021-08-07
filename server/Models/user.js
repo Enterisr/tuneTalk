@@ -80,11 +80,15 @@ class User {
     this.socket.on("disconnect", () => {
       console.log("bye!");
       console.info(this.nickName + " left " + this.chatter.nickName + " alone");
-      this.socket.to(this.roomID).emit("roomEmpty");
+
+      this.socket.leave(this.roomID);
       this.roomManager.DeleteUser(this);
       if (this.chatter) {
-        if (!this.roomManager.SearchRoom(this.chatter)) {
-          this.roomManager.UserWaiting(this.chatter);
+        this.chatter.socket.leave(this.roomID);
+        const room = this.roomManager.SearchRoom(this.chatter);
+        if (!room) {
+          console.log("emitting roomEmpty for " + this.chatter.nickName);
+          this.chatter.socket.emit("roomEmpty");
         }
       }
     });
@@ -106,10 +110,10 @@ class User {
       });
     });
   }
-  keepLooking() {
+  ImWaiting() {
     this.isWaiting = true;
     this.chatter = false;
-    console.log("keep looking you snowflake -" + this.socket.id);
+    //  console.log("keep looking you snowflake -" + this.socket.id);
   }
 }
 

@@ -2,17 +2,15 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { Redirect } from "react-router-dom";
 import style from "./home.css";
-
+import Utils from "../../Utils";
 import image from "./firstime.jpeg";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    let href = window.location.href.includes(":3000")
-      ? `http://${window.location.hostname}:5000/newHere`
-      : `https://${window.location.hostname}/newHere`;
+    let redirectHref = Utils.GetServerURI() + "/newHere";
     this.state = {
-      rightHref: href,
+      redirectHref,
       nickName: null,
       newUser: true,
       userSrvCity: "",
@@ -132,7 +130,7 @@ class Home extends React.Component {
             if (this.state.nickName != null)
               localStorage.setItem("nickname", this.state.nickName);
             window.location.href =
-              this.state.rightHref + "?nickname=" + this.state.nickName;
+              this.state.redirectHref + "?nickname=" + this.state.nickName;
           }}
         >
           {" "}

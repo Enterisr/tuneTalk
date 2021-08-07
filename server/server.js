@@ -5,14 +5,15 @@ const bodyParser = require("body-parser");
 const app = express();
 require("dotenv").config();
 
-const http = require("http").Server(app);
+const http = require("http").createServer(app);
 const request = require("request"); // "Request" library
-const io = require("socket.io")(http, { origins: "*:*" });
+const io = require("socket.io")(http, {
+  origins: "*:*",
+});
 const port = process.env.PORT || 5000;
 const RoomManager = require("./Models/roomManager");
 const TitleBuilder = require("./Models/TitleBuilder/TitleBuilder");
 const roomManager = new RoomManager("name", io);
-const nsp = io.of("/my-namespace");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const winston = require("winston");
@@ -40,12 +41,14 @@ app.post("/getTitle", async (req, res) => {
 });
 
 app.get("/newHere", (req, res) => {
+  console.log("new here: " + req.query.nickname);
   roomManager.NewEnternce(req, res);
 });
 
 app.get("/callback", async function (req, res) {
   let code = req.query.code || null;
   let user = roomManager.usersAuthing.find((u) => req.query.state === u.id);
+  console.log(user.id + " returned from callback");
   let authOptions = {
     url: "https://accounts.spotify.com/api/token",
     form: {
@@ -64,31 +67,25 @@ app.get("/callback", async function (req, res) {
   };
   request.post(authOptions, async function (error, response, body) {
     var access_token = body.access_token;
-    let connectedInFormated = user.connectedIn.format("DD/MM/YYYY HH:mm:ss");
     roomManager.UserAuthed(user, access_token);
-
-    logger.info([
-      { user: "connected" },
-      {
-        "ip ": user.ip,
-        connectedIn: connectedInFormated,
-        token: access_token,
-      },
-    ]);
-
+    console.log(user.nickName + " got acsess token");
     await user.getSpotifyData();
     let uri = process.env.FRONTEND_URI;
-    res.redirect(uri + "/chat?access_token=" + access_token);
+    res.redirect(uri + "/chat?access_token=" + access_token + "&id=" + user.id);
   });
 });
-nsp.on("connection", function (socket) {
-  socket.on("access_token", function (access_token) {
-    let user = roomManager.BindToSocket(socket, access_token);
+io.on("connect", function (socket) {
+  socket.on("ready", function ({ id, access_token }) {
+    let user = roomManager.BindToSocket(socket, id, access_token);
     if (user) {
-      console.log("user socket" + user.socket.id);
-      roomManager.SearchRoom(user);
+      const room = roomManager.SearchRoom(user);
+      if (!room) {
+        console.log("emitting roomEmpty for " + user.nickName);
+        socket.emit("roomEmpty");
+      }
     } else {
-      //  socket.emit("disconnected");
+      console.error("user not found.");
+      socket.emit("disconnected");
     }
   });
 });

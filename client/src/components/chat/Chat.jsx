@@ -7,16 +7,18 @@ import Sound from "react-sound";
 import ChatBody from "./ChatBody/ChatBody";
 import cogoToast from "cogo-toast";
 import Title from "./ChatTitle/Title.js";
+import Utils from "../../Utils";
 import Writer from "./Writer/Writer.js";
 class EntireChat extends React.Component {
   constructor(props, context) {
+    const serverURI = Utils.GetServerURI();
     super(props, context);
     this.state = {
       inputValue: "",
       chatLog: [],
       chatLogOwnerShip: [],
       servereq: "none",
-      socket: io("/my-namespace"),
+      socket: io(serverURI),
       otherUser: { nickName: "" },
       canWrite: false,
       backgroundURL: " ",
@@ -60,10 +62,19 @@ class EntireChat extends React.Component {
     this.state.socket.on("connect", () => {
       let url = new URL(window.location.href);
       let access_token = url.searchParams.get("access_token");
-      this.state.socket.emit("access_token", access_token);
+      let id = url.searchParams.get("id");
+      this.state.socket.emit("ready", { id, access_token });
     });
     this.state.socket.on("disconnect", () => {
-      this.props.history.push("/");
+      //  this.props.history.push("/");
+      this.setState({
+        otherUser: {},
+        chatState: "roomEmpty",
+        chatLog: [],
+        chatLogOwnerShip: [],
+        canWrite: false,
+        inputValue: "",
+      });
     });
     this.state.socket.on("enteredRoom", ({ otherUser, sharedArtist }) => {
       this.setState(

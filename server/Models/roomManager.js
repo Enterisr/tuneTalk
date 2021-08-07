@@ -13,14 +13,13 @@ let redirect_uri = port.toString().includes("5000")
 
 class RoomManager {
   constructor(nameSpace, io) {
-    this.rooms = [];
     this.LastRoomID = 0;
     this.nameSpace = nameSpace;
     this.userCount = 0;
-    this.users = [];
+    this.users = new Map();
     this.io = io;
-    this.usersAuthing = []; //1st prop - auth, 2st - user [{'aasdasda31312',{user object}}]
-    this.usersWaiting = [];
+    this.usersAuthing = [];
+    this.usersWaiting = new Map();
   }
   UserCreated(user) {
     this.usersAuthing.push(user);
@@ -29,53 +28,37 @@ class RoomManager {
     let userIDX = this.usersAuthing.findIndex((u) => u.id === user.id);
     if (userIDX) this.usersAuthing.splice(userIDX, 1);
     user.access_token = access_token;
-    this.UserWaiting(user);
+    this.users.set(user.id, user);
+    //   this.UserWaiting(user);
   }
   UserWaiting(user) {
-    user.keepLooking();
-    this.usersWaiting.push(user);
+    user.ImWaiting();
+    this.usersWaiting.set(user.id, user);
   }
-  BindToSocket(socket, access_token) {
-    const user = this.usersWaiting.find(
-      (us) => us.access_token === access_token
+  BindToSocket(socket, id, access_token) {
+    const user = Array.from(this.users.values()).find(
+      (us) => us.access_token === access_token && us.id === id && !us.socket.id
     );
     if (user) {
-      this.users.push(user);
+      console.log("binding to socket: " + user.id);
+
       user.BindToSocket(socket);
       return user;
     } else {
+      console.log("cant find user");
       socket.disconnect();
       return false;
     }
   }
   DeleteUser(user) {
-    this.users = this.users.filter((cuser, idx) => {
-      return cuser.socket.id !== user.socket.id;
-    });
-    if (user.isWaiting) {
-      this.usersWaiting = this.usersWaiting.filter((cuser, idx) => {
-        return cuser.socket.id !== user.socket.id;
-      });
-    }
-    console.log(this.users.length + " users left");
-  }
-  RoomIsWaiting(user) {
-    let Open_room = false;
-    this.rooms.forEach((room) => {
-      if (room.users.length < 2 && user.roomID !== room.roomID) {
-        Open_room = room;
-      }
-    });
+    this.users.delete(user.id);
 
-    return Open_room;
+    if (user.isWaiting) {
+      this.usersWaiting.delete(user.id);
+    }
+    console.log(this.users.size + " users left");
   }
-  NewRoom(user) {
-    let newRoom = new Room(user, moment(), this.LastRoomID + 1, this.nameSpace);
-    this.LastRoomID++;
-    this.rooms.push(newRoom);
-    //console.log(user.name + " created room number "+newRoom.roomID)
-    return newRoom;
-  }
+
   FindSharedArtist(user, user2) {
     for (let i = 0; i < user.favArtists.length; i++) {
       for (let j = 0; j < user2.favArtists.length; j++) {
@@ -91,48 +74,38 @@ class RoomManager {
       user,
       user.musicTaste.length
     );
-    if (compatibeUser !== null) {
+    if (compatibeUser !== null && !compatibeUser.chatter) {
       let sharedArtist = this.FindSharedArtist(user, compatibeUser);
       user.chatter = compatibeUser;
       compatibeUser.chatter = user;
       user.JoinRoom("room-" + this.LastRoomID, sharedArtist);
       compatibeUser.JoinRoom("room-" + this.LastRoomID, sharedArtist);
-      console.info(
-        user.nickName + " was connected with " + compatibeUser.nickName
-      );
+      console.info("room-" + this.LastRoomID + " was created");
 
       let thisRoom = this.LastRoomID;
       this.LastRoomID++;
       return "room-" + thisRoom;
     } else {
-      console.log(this.usersWaiting.length + " users waiting");
+      this.UserWaiting(user);
+      console.log(this.usersWaiting.size + " users waiting");
       return false;
     }
   }
 
   SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 1) {
-    for (let i = 0; i < this.usersWaiting.length; i++) {
-      let comparedUser = this.usersWaiting[i];
+    const usersWaitingArr = Array.from(this.usersWaiting.values());
+    for (let i = 0; i < usersWaitingArr.length; i++) {
+      let comparedUser = usersWaitingArr[i];
       if (comparedUser.id !== user.id) {
         let compatibilityScore = 0;
         let isNotCompatible = false;
-        console.log(user.socket.id + " music taste: " + user.musicTaste);
-        console.log(
-          comparedUser.socket.id + " music taste: " + comparedUser.musicTaste
-        );
+
         let userTaste = [...user.musicTaste];
         let user2Taste = [...comparedUser.musicTaste];
         for (let j = 0; j < userTaste.length && !isNotCompatible; j++) {
           for (let k = 0; k < user2Taste.length; k++) {
             if (user2Taste[j] === userTaste[k]) {
               compatibilityScore++;
-              console.log(
-                comparedUser.socket.id +
-                  " and " +
-                  user.socket.id +
-                  " loves " +
-                  userTaste[j]
-              );
               userTaste.splice(j, 1);
               user2Taste.splice(k, 1);
 
@@ -144,10 +117,8 @@ class RoomManager {
             j > TasteReqierd && compatibilityScore < TasteReqierd;
         }
         if (compatibilityScore >= TasteReqierd) {
-          console.log("found compatibility of " + compatibilityScore);
-          const IDXuser = this.usersWaiting.findIndex((u) => u.id === user.id);
-          this.usersWaiting.splice(IDXuser, 1);
-          this.usersWaiting.splice(i, 1);
+          this.usersWaiting.delete(user.id);
+          this.usersWaiting.delete(comparedUser.id);
           return comparedUser;
         }
       }
