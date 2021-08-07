@@ -65,8 +65,6 @@ class Home extends React.Component {
     return (
       <div id="wrapHome">
         <h2 className="subTitle">Are you the new guy?</h2>
-        <img width="400px" src={image} />
-
         <div class="desc">
           <p>
             subscribe via your spotify account to connect to other K00L people
