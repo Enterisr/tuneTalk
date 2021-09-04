@@ -6,6 +6,7 @@ require("dotenv").config();
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const port = process.env.PORT || 5000;
 const prodURI = require("../CONSTS").productionURI;
+const CONSTS = require("../CONSTS");
 
 let redirect_uri = port.toString().includes("5000")
   ? "http://192.168.14.10:5000/callback"
@@ -20,6 +21,7 @@ class RoomManager {
     this.io = io;
     this.usersAuthing = [];
     this.usersWaiting = new Map();
+    this.usersLeaved = new Map();
   }
   UserCreated(user) {
     this.usersAuthing.push(user);
@@ -37,11 +39,12 @@ class RoomManager {
   }
   BindToSocket(socket, id, access_token) {
     const user = Array.from(this.users.values()).find(
-      (us) => us.access_token === access_token && us.id === id && !us.socket.id
+      (us) => us.access_token === access_token && us.id === id //&& !us.socket.id
     );
-    if (user) {
-      console.log("binding to socket: " + user.id);
 
+    if (user) {
+      this.RemoveFromLeavedUsers(user);
+      console.log("binding to socket: " + user.id);
       user.BindToSocket(socket);
       return user;
     } else {
@@ -50,13 +53,25 @@ class RoomManager {
       return false;
     }
   }
+  RemoveFromLeavedUsers(user) {
+    user.isRejoined = true;
+  }
   DeleteUser(user) {
-    this.users.delete(user.id);
+    this.usersLeaved.set(user.id, user);
+    user.isRejoined = false;
+    setTimeout(() => {
+      this.usersLeaved.delete(user.id);
+      console.log("timeout " + user.nickName);
 
-    if (user.isWaiting) {
-      this.usersWaiting.delete(user.id);
-    }
-    console.log(this.users.size + " users left");
+      if (!user.isRejoined) {
+        console.log("deleted user " + user.nickName);
+        this.users.delete(user.id);
+        if (user.isWaiting) {
+          this.usersWaiting.delete(user.id);
+        }
+      }
+    }, CONSTS.ttlMSForUser);
+    console.log(this.users.size + " users are still here");
   }
 
   FindSharedArtist(user, user2) {

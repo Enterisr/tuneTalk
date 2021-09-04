@@ -7,8 +7,10 @@ require("dotenv").config();
 
 const http = require("http").createServer(app);
 const request = require("request"); // "Request" library
-const io = require("socket.io")(http, {
+const sockIO = require("socket.io");
+const io = new sockIO(http, {
   origins: "*:*",
+  wsEngine: "ws",
 });
 const port = process.env.PORT || 5000;
 const RoomManager = require("./Models/roomManager");
@@ -74,19 +76,23 @@ app.get("/callback", async function (req, res) {
     res.redirect(uri + "/chat?access_token=" + access_token + "&id=" + user.id);
   });
 });
+
+function handleSocketReadyEvent(user, socket) {
+  if (user) {
+    const room = roomManager.SearchRoom(user);
+    if (!room) {
+      console.log("emitting roomEmpty for " + user.nickName);
+      socket.emit("roomEmpty");
+    }
+  } else {
+    console.error("user not found.");
+    socket.emit("disconnected");
+  }
+}
 io.on("connect", function (socket) {
   socket.on("ready", function ({ id, access_token }) {
     let user = roomManager.BindToSocket(socket, id, access_token);
-    if (user) {
-      const room = roomManager.SearchRoom(user);
-      if (!room) {
-        console.log("emitting roomEmpty for " + user.nickName);
-        socket.emit("roomEmpty");
-      }
-    } else {
-      console.error("user not found.");
-      socket.emit("disconnected");
-    }
+    handleSocketReadyEvent(user, socket);
   });
 });
 

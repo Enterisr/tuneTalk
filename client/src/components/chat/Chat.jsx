@@ -47,7 +47,8 @@ class EntireChat extends React.Component {
     const shouldEmitIsTyping =
       !this.state.isEmittedTyping &&
       prevState.inputValue !== this.state.inputValue &&
-      this.state.inputValue;
+      this.state.inputValue &&
+      prevState.inputValue;
     if (shouldEmitIsTyping) {
       this.state.socket.emit("typing");
       this.setState({ isEmittedTyping: true }, () =>
@@ -64,6 +65,12 @@ class EntireChat extends React.Component {
       document.title = "tuneTalk";
     }
   }
+  sendReadySignal(eventType) {
+    let url = new URL(window.location.href);
+    let access_token = url.searchParams.get("access_token");
+    let id = url.searchParams.get("id");
+    this.state.socket.emit(eventType, { id, access_token });
+  }
   componentDidMount() {
     window.addEventListener("focus", this.onFocus);
     this.state.socket.on("New message", (msg, time) => {
@@ -72,28 +79,17 @@ class EntireChat extends React.Component {
       this.setState({ playAudio: "PLAYING" });
     });
     this.state.socket.on("connect", () => {
-      let url = new URL(window.location.href);
-      let access_token = url.searchParams.get("access_token");
-      let id = url.searchParams.get("id");
-      this.state.socket.emit("ready", { id, access_token });
+      this.sendReadySignal("ready");
     });
-    this.state.socket.on("disconnect", () => {
-      //  this.props.history.push("/");
-      this.setState({
-        otherUser: {},
-        chatState: "roomEmpty",
-        chatLog: [],
-        chatLogOwnerShip: [],
-        canWrite: false,
-        inputValue: "",
-      });
-    });
+
     this.state.socket.on("enteredRoom", ({ otherUser, sharedArtist }) => {
       this.setState(
         {
           otherUser,
           chatState: "enteredRoom",
           canWrite: true,
+          chatLog: [],
+          chatLogOwnerShip: [],
           inputValue: "You have a great taste!",
           style: {
             backgroundImage: 'url("' + sharedArtist.images[0].url + '")',

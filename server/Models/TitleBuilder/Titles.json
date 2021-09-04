@@ -1,16 +1,16 @@
 {
-	"enteredRoom": [
-		"You are talking to #user#",
-		"Say something nice to #user#",
-		"Play nicely with #user#",
-		"You have the pleausre to talk to #user#",
-		"#user# and you like the same music, maybe you will like each other too!"
-	],
-	"roomEmpty": [
-		"Searching intersting person for you",
-		"Behold for you next chat",
-		"searching...",
-		"#self#, The patience saved the cat",
-		"Please stand-by while we search a new mate"
-	]
+  "enteredRoom": [
+    "You are talking to #user#",
+    "Say something nice to #user#",
+    "Play nicely with #user#",
+    "You have the pleausre to talk to #user#",
+    "#user# and you like the same music, maybe you will like each other too!"
+  ],
+  "roomEmpty": [
+    "Searching intersting person for you",
+    "Behold for you next chat",
+    "searching",
+    "#self#, The patience saved the cat",
+    "Please stand-by while we search a new mate"
+  ]
 }
