@@ -1,5 +1,5 @@
 env: standard
-runtime: nodejs10
+runtime: nodejs14
 service: default
 handlers:
   - url: /static
@@ -17,4 +17,4 @@ handlers:
     upload: client/build/index.html
 env_variables:
   NODE_ENV: "production"
-  FRONTEND_URI: "tunetalk.oa.r.appspot.com"
+  FRONTEND_URI: ""

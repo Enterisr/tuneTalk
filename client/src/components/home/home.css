@@ -104,6 +104,25 @@ input.nicknameInput:focus {
 }
 @media screen and (max-width: 700px) {
   .nicknameInput {
+    width: 100%;
     margin: 0;
+    background-color: rgb(31, 31, 31);
+    padding: 0.5em;
+    margin-top: 1em;
+  }
+  input.nicknameInput:focus {
+    box-shadow: 2px 7px 2px -7px #008ac3, inset 0px 5px 8px -7px #16ff9e;
+    width: 100%;
+    margin: 0;
+    background-color: rgb(31, 31, 31);
+    padding: 0.5em;
+    margin-top: 1em;
+  }
+
+  #wrapHome > .desc {
+    font-size: 2vh;
+    box-shadow: 0px 0px 0px 2px #a8ffff;
+
+    width: 100vw;
   }
 }

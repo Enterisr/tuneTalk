@@ -182,5 +182,6 @@ div {
   #reactWrap {
     width: 100%;
     margin: 0rem auto;
+    max-height: calc(100% - 120px);
   }
 }

@@ -21,7 +21,7 @@ const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_SECRET;
 const prodURI = require("./CONSTS").productionURI;
 let redirect_uri = port.toString().includes("5000")
-  ? "http://192.168.1.16:5000/callback"
+  ? "http://192.168.14.10:5000/callback"
   : `${prodURI}/callback`;
 app.use(bodyParser.json());
 

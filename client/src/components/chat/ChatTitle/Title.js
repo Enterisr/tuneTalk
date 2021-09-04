@@ -27,6 +27,9 @@ export default function Title(props) {
     <div id="title" className={"titleBar " + props.chatState}>
       {" "}
       {titleValue}
+      {props.chatState === "typing" && (
+        <>{props.otherUser.nickName} is typing...</>
+      )}
       {props.chatState == "roomEmpty" && (
         <React.Fragment>
           <span

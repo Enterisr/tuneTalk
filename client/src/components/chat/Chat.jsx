@@ -29,6 +29,7 @@ class EntireChat extends React.Component {
       },
       windowHasFocus: false,
       chatState: "roomEmpty",
+      isEmittedTyping: false,
     };
     autoBind(this);
   }
@@ -42,7 +43,18 @@ class EntireChat extends React.Component {
   componentWillUnmount() {
     window.removeEventListener("focus", this.onFocus);
   }
-  componentWillUpdate() {}
+  componentDidUpdate(prevProps, prevState) {
+    const shouldEmitIsTyping =
+      !this.state.isEmittedTyping &&
+      prevState.inputValue !== this.state.inputValue &&
+      this.state.inputValue;
+    if (shouldEmitIsTyping) {
+      this.state.socket.emit("typing");
+      this.setState({ isEmittedTyping: true }, () =>
+        setTimeout(() => this.setState({ isEmittedTyping: false }), 1000)
+      );
+    }
+  }
   appendToTitle() {
     if (!this.state.windowHasFocus) {
       document.title.includes("new message!")
@@ -95,12 +107,15 @@ class EntireChat extends React.Component {
     //
     this.state.socket.on("typing", () => {
       this.setState({ isTheOtherUserTyping: true, chatState: "typing" });
-      this.timer = setTimeout(() => {
-        this.setState({
-          isTheOtherUserTyping: false,
-          chatState: "enteredRoom",
-        });
-      }, 3000);
+      if (!this.otherUserTypingTimer) {
+        this.otherUserTypingTimer = setTimeout(() => {
+          this.setState({
+            isTheOtherUserTyping: false,
+            chatState: "enteredRoom",
+          });
+          this.otherUserTypingTimer = false;
+        }, 3000);
+      }
     });
 
     this.state.socket.on("roomEmpty", (msg) => {
@@ -145,8 +160,7 @@ class EntireChat extends React.Component {
   }
 
   onTextEdit(inputValue) {
-    this.setState({ inputValue: inputValue });
-    this.state.socket.emit("typing");
+    this.setState({ inputValue });
   }
 
   HandleKeyPress(e) {
@@ -163,11 +177,6 @@ class EntireChat extends React.Component {
         onKeyPress={this.HandleKeyPress}
       >
         <Title
-          value={
-            this.state.isTheOtherUserTyping
-              ? this.state.otherUser.nickName + " is typing..."
-              : this.state.otherUser.nickName
-          }
           chatState={this.state.chatState}
           otherUser={this.state.otherUser}
         />

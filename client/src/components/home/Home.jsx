@@ -48,7 +48,7 @@ class Home extends React.Component {
       ],
     };
   }
-  componentWillMount() {
+  componentDidMount() {
     let isNewUser = localStorage.getItem("isNewUser");
     if (isNewUser == "false") {
       this.setState({ newUser: false });
