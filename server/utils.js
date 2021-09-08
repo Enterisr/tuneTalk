@@ -3,6 +3,17 @@ let utils = {
     const rnd = Math.floor(Math.random() * arr.length);
     return arr[rnd];
   },
+  findMaxObjectVal: function (obj) {
+    let max = 0;
+    let maxProp = null;
+    Object.entries(obj).forEach(([key, val]) => {
+      if (val > max) {
+        max = val;
+        maxProp = key;
+      }
+    });
+    return { maxProp, max };
+  },
   generateRandomString(length) {
     var text = "";
     var possible =

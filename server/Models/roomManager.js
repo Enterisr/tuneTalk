@@ -7,9 +7,10 @@ const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const port = process.env.PORT || 5000;
 const prodURI = require("../CONSTS").productionURI;
 const CONSTS = require("../CONSTS");
+const utils = require("../utils");
 
 let redirect_uri = port.toString().includes("5000")
-  ? "http://192.168.14.10:5000/callback"
+  ? "http://192.168.1.16:5000/callback"
   : `${prodURI}/callback`;
 
 class RoomManager {
@@ -109,6 +110,7 @@ class RoomManager {
 
   SearchUsersWithNGenres(user, TasteReqierd, minTasteReqierd = 1) {
     const usersWaitingArr = Array.from(this.usersWaiting.values());
+    const usersCompattibillity = {};
     for (let i = 0; i < usersWaitingArr.length; i++) {
       let comparedUser = usersWaitingArr[i];
       if (comparedUser.id !== user.id) {
@@ -131,15 +133,15 @@ class RoomManager {
           isNotCompatible =
             j > TasteReqierd && compatibilityScore < TasteReqierd;
         }
-        if (compatibilityScore >= TasteReqierd) {
-          this.usersWaiting.delete(user.id);
-          this.usersWaiting.delete(comparedUser.id);
-          return comparedUser;
-        }
+        usersCompattibillity[comparedUser.id] = compatibilityScore;
       }
     }
-    if (TasteReqierd > minTasteReqierd) {
-      return this.SearchUsersWithNGenres(user, TasteReqierd - 1);
+
+    const { maxProp: matchingUserId, max: maxTaste } =
+      utils.findMaxObjectVal(usersCompattibillity);
+    if (maxTaste > minTasteReqierd) {
+      const matchingUser = usersWaitingArr.find((u) => u.id === matchingUserId);
+      return matchingUser;
     } else {
       return null;
     }

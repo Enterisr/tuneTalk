@@ -98,7 +98,7 @@ class User {
     Object.entries(this.favArtists).forEach(([key, artist]) => {
       geners.push(...artist.genres);
     });
-    return FindMostCommonGeners(geners, 6);
+    return FindMostCommonGeners(geners, 10);
   }
   JoinRoom(roomName, sharedArtist) {
     this.socket.join(roomName, () => {
