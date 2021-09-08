@@ -3,12 +3,12 @@ import "./chat.css";
 import io from "socket.io-client";
 import autoBind from "react-autobind";
 import moment, { duration } from "moment";
-import Sound from "react-sound";
 import ChatBody from "./ChatBody/ChatBody";
 import cogoToast from "cogo-toast";
 import Title from "./ChatTitle/Title.js";
 import Utils from "../../Utils";
 import Writer from "./Writer/Writer.js";
+import { withRouter } from "react-router-dom";
 class EntireChat extends React.Component {
   constructor(props, context) {
     const serverURI = Utils.GetServerURI();
@@ -80,6 +80,9 @@ class EntireChat extends React.Component {
     });
     this.state.socket.on("connect", () => {
       this.sendReadySignal("ready");
+    });
+    this.state.socket.on("disconnect", () => {
+      this.props.history.push("/");
     });
 
     this.state.socket.on("enteredRoom", ({ otherUser, sharedArtist }) => {
@@ -192,4 +195,4 @@ class EntireChat extends React.Component {
   }
 }
 
-export default EntireChat;
+export default withRouter(EntireChat);
