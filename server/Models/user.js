@@ -98,14 +98,20 @@ class User {
     Object.entries(this.favArtists).forEach(([key, artist]) => {
       geners.push(...artist.genres);
     });
-    return FindMostCommonGeners(geners, 10);
+    return FindMostCommonGeners(geners, 40);
   }
-  JoinRoom(roomName, sharedArtist) {
+  FindMatchingGeners(otherUser) {
+    let generes = this.musicTaste;
+    let otherUserGeners = otherUser.musicTaste;
+    return generes.filter((genere) => otherUserGeners.includes(genere));
+  }
+  JoinRoom(roomName, sharedArtist, sharedGeners) {
     this.socket.join(roomName, () => {
       this.roomID = roomName;
       const { nickName, favArtists } = this.chatter;
       this.socket.emit("enteredRoom", {
         sharedArtist,
+        sharedGeners,
         otherUser: { nickName, favArtists },
       });
     });

@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { Redirect } from "react-router-dom";
 import style from "./home.css";
 import Utils from "../../Utils";
-import image from "./firstime.jpeg";
-
+import cogoToast from "cogo-toast";
 class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -57,6 +55,11 @@ class Home extends React.Component {
         this.setState({ nickName: name });
       }
       this.setState({ openingSentence: this.pickRandomSentence() });
+    }
+    if (window.location.search.includes("disconnect")) {
+      cogoToast.error("Seems like we disconnected! You can connect again now", {
+        hideAfter: 0,
+      });
     }
   }
 

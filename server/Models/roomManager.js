@@ -83,7 +83,7 @@ class RoomManager {
         }
       }
     }
-    return user.favArtists[0];
+    return null;
   }
   SearchRoom(user) {
     let compatibeUser = this.SearchUsersWithNGenres(
@@ -92,15 +92,15 @@ class RoomManager {
     );
     if (compatibeUser !== null && !compatibeUser.chatter) {
       let sharedArtist = this.FindSharedArtist(user, compatibeUser);
+      let sharedGeners = user.FindMatchingGeners(compatibeUser);
+      const roomID = "r/" + this.LastRoomID;
       user.chatter = compatibeUser;
       compatibeUser.chatter = user;
-      user.JoinRoom("room-" + this.LastRoomID, sharedArtist);
-      compatibeUser.JoinRoom("room-" + this.LastRoomID, sharedArtist);
-      console.info("room-" + this.LastRoomID + " was created");
-
-      let thisRoom = this.LastRoomID;
+      user.JoinRoom(roomID, sharedArtist, sharedGeners);
+      compatibeUser.JoinRoom(roomID, sharedArtist, sharedGeners);
+      console.info(roomID + " was created");
       this.LastRoomID++;
-      return "room-" + thisRoom;
+      return roomID;
     } else {
       this.UserWaiting(user);
       console.log(this.usersWaiting.size + " users waiting");

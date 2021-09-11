@@ -82,37 +82,50 @@ class EntireChat extends React.Component {
       this.sendReadySignal("ready");
     });
     this.state.socket.on("disconnect", () => {
-      this.props.history.push("/");
+      this.props.history.push("/?disconnect");
     });
 
-    this.state.socket.on("enteredRoom", ({ otherUser, sharedArtist }) => {
-      this.setState(
-        {
-          otherUser,
-          chatState: "enteredRoom",
-          canWrite: true,
-          chatLog: [],
-          chatLogOwnerShip: [],
-          inputValue: "You have a great taste!",
-          style: {
-            backgroundImage: 'url("' + sharedArtist.images[0].url + '")',
+    this.state.socket.on(
+      "enteredRoom",
+      ({ otherUser, sharedArtist, sharedGeners }) => {
+        const backgroundImg = sharedArtist
+          ? sharedArtist.images[0].url
+          : otherUser.favArtists[0].images[0].url;
+        this.setState(
+          {
+            otherUser,
+            chatState: "enteredRoom",
+            canWrite: true,
+            chatLog: [],
+            chatLogOwnerShip: [],
+            inputValue: "You have a great taste!",
+            style: {
+              backgroundImage: 'url("' + backgroundImg + '")',
+            },
           },
-        },
-        () => {
-          cogoToast.success("You both like: " + sharedArtist.name);
-        }
-      );
-    });
+          () => {
+            const mutual = sharedArtist ? sharedArtist.name : sharedGeners[0];
+            cogoToast.success("You both like " + mutual);
+            if (!sharedArtist)
+              cogoToast.success("They like " + otherUser.favArtists[0].name);
+          }
+        );
+      }
+    );
     //
     this.state.socket.on("typing", () => {
       this.setState({ isTheOtherUserTyping: true, chatState: "typing" });
       if (!this.otherUserTypingTimer) {
         this.otherUserTypingTimer = setTimeout(() => {
-          this.setState({
-            isTheOtherUserTyping: false,
-            chatState: "enteredRoom",
-          });
-          this.otherUserTypingTimer = false;
+          this.setState(
+            {
+              isTheOtherUserTyping: false,
+              chatState: "enteredRoom",
+            },
+            () => {
+              this.otherUserTypingTimer = false;
+            }
+          );
         }, 3000);
       }
     });
@@ -128,7 +141,7 @@ class EntireChat extends React.Component {
       });
     });
     this.state.socket.on("noActualTaste", () => {
-      cogoToast.error(
+      cogoToast.warn(
         "we didn't caught your musical taste, so we picked one for you!  ❤️"
       );
     });

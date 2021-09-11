@@ -10,8 +10,8 @@ const request = require("request"); // "Request" library
 const sockIO = require("socket.io");
 const io = new sockIO(http, {
   origins: "*:*",
-  pingTimeout: 1000,
-  pingInterval: 1000,
+  pingTimeout: 3000,
+  pingInterval: 4000,
   wsEngine: "ws",
 });
 const port = process.env.PORT || 5000;
@@ -50,6 +50,7 @@ app.get("/newHere", (req, res) => {
 });
 
 app.get("/callback", async function (req, res) {
+  //callback from spotify oauth api after finishing auth
   let code = req.query.code || null;
   let user = roomManager.usersAuthing.find((u) => req.query.state === u.id);
   console.log(user.id + " returned from callback");
