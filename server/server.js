@@ -10,6 +10,8 @@ const request = require("request"); // "Request" library
 const sockIO = require("socket.io");
 const io = new sockIO(http, {
   origins: "*:*",
+  pingTimeout: 1000,
+  pingInterval: 1000,
   wsEngine: "ws",
 });
 const port = process.env.PORT || 5000;
@@ -23,7 +25,7 @@ const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_SECRET;
 const prodURI = require("./CONSTS").productionURI;
 let redirect_uri = port.toString().includes("5000")
-  ? "http://192.168.1.16:5000/callback"
+  ? "http://192.168.14.10:5000/callback"
   : `${prodURI}/callback`;
 app.use(bodyParser.json());
 

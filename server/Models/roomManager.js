@@ -10,7 +10,7 @@ const CONSTS = require("../CONSTS");
 const utils = require("../utils");
 
 let redirect_uri = port.toString().includes("5000")
-  ? "http://192.168.1.16:5000/callback"
+  ? "http://192.168.14.10:5000/callback"
   : `${prodURI}/callback`;
 
 class RoomManager {
