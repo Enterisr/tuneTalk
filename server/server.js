@@ -113,6 +113,14 @@ if (process.env.NODE_ENV === "production") {
 
   // Express serve up index.html file if it doesn't recognize route
   app.get("*", (req, res) => {
+    //disable caching the HTML file, so it won't ask for non existing files
+    ///(because CRA generates new files with each build...)
+    response.header(
+      "Cache-Control",
+      "private, no-cache, no-store, must-revalidate"
+    );
+    response.header("Expires", "-1");
+    response.header("Pragma", "no-cache");
     res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
   });
 }
