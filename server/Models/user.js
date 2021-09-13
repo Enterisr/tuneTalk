@@ -3,15 +3,8 @@ const RM = require("./roomManager");
 const moment = require("moment");
 const DEFAULT_SPOTIFY_DATA = require("../defaultSpotifyData");
 const { v4: uuidv4 } = require("uuid");
-/*class Message {
-	constructor(socket, time, value, from, to) {
-		this.socket = socket;
-		this.time = time;
-		this.value = value;
-		this.from = from;
-		this.to = to;
-	}
-}*/
+const { logger } = require("../server");
+
 class User {
   constructor(
     ip,
@@ -70,6 +63,7 @@ class User {
       this.socket.emit("noActualTaste");
     }
     this.socket.on("New message", (msg) => {
+      logger.info("new message");
       this.socket
         .to(this.roomID)
         .emit("New message", msg, moment().format("HH:mm:ss"));

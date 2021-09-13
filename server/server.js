@@ -15,6 +15,8 @@ const io = new sockIO(http, {
   wsEngine: "ws",
 });
 const port = process.env.PORT || 5000;
+const { LoggingWinston: GCPLogger } = require("@google-cloud/logging-winston");
+const GCPLogging = new GCPLogger();
 const RoomManager = require("./Models/roomManager");
 const TitleBuilder = require("./Models/TitleBuilder/TitleBuilder");
 const roomManager = new RoomManager("name", io);
@@ -45,7 +47,7 @@ app.post("/getTitle", async (req, res) => {
 });
 
 app.get("/newHere", (req, res) => {
-  console.log("new here: " + req.query.nickname);
+  logger.info("new here: " + req.query.nickname);
   roomManager.NewEnternce(req, res);
 });
 
@@ -53,7 +55,7 @@ app.get("/callback", async function (req, res) {
   //callback from spotify oauth api after finishing auth
   let code = req.query.code || null;
   let user = roomManager.usersAuthing.find((u) => req.query.state === u.id);
-  console.log(user.id + " returned from callback");
+  logger.info(user.id + " returned from callback");
   let authOptions = {
     url: "https://accounts.spotify.com/api/token",
     form: {
@@ -73,7 +75,7 @@ app.get("/callback", async function (req, res) {
   request.post(authOptions, async function (error, response, body) {
     var access_token = body.access_token;
     roomManager.UserAuthed(user, access_token);
-    console.log(user.nickName + " got acsess token");
+    logger.info(user.nickName + " got acsess token");
     await user.getSpotifyData();
     let uri = process.env.FRONTEND_URI;
     res.redirect(uri + "/chat?access_token=" + access_token + "&id=" + user.id);
@@ -84,7 +86,7 @@ function handleSocketReadyEvent(user, socket) {
   if (user) {
     const room = roomManager.SearchRoom(user);
     if (!room) {
-      console.log("emitting roomEmpty for " + user.nickName);
+      logger.info("emitting roomEmpty for " + user.nickName);
       socket.emit("roomEmpty");
     }
   } else {
@@ -123,6 +125,16 @@ if (process.env.NODE_ENV === "production") {
     response.header("Pragma", "no-cache");
     res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
   });
+  //also use gcplogging
+  logger = winston.createLogger({
+    transports: [
+      new winston.transports.Console(),
+      GCPLogging,
+      // new winston.transports.Http({})
+      new winston.transports.File({ filename: "combined.log" }),
+    ],
+  });
 }
 
-http.listen(port, () => console.log(`Listening on port ${port}`));
+http.listen(port, () => logger.info(`Listening on port ${port}`));
+module.exports.logger = logger;
