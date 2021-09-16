@@ -1,15 +1,15 @@
 import React from 'react';
 import {StyleSheet, Text, useColorScheme} from 'react-native';
 import colors from '../../colors';
-function Title({children, customStyles}) {
-  return <Text style={[styles.title, customStyles]}>{children}</Text>;
+function P({children, customStyles}) {
+  return <Text style={[styles.P, customStyles]}>{children}</Text>;
 }
-export default Title;
+export default P;
 const styles = StyleSheet.create({
-  title: {
-    color: colors.accent,
-    fontSize: 30,
-    flex: 0,
+  P: {
+    color: colors.text,
+    fontSize: 25,
+    padding: 2,
     fontFamily: 'TitilliumWeb-Regular',
   },
 });
