@@ -12,38 +12,6 @@ class Home extends React.Component {
       nickName: null,
       newUser: true,
       userSrvCity: "",
-      openingSentence: "",
-      openingSentences: [
-        "howdy again",
-        "long time no see",
-        "here to talk?",
-        "feel it still? you should go to the doctor",
-        "sweet home alabama intensifies!",
-        "you are one step closer to having fun",
-        "god leave the queen alone!",
-        "back in black!",
-        "maybe today",
-        "salute your salmon",
-        "where is my burger?",
-        "let's twist again!",
-        "stacy's mom is online!",
-        "for here, am i sitting in a tin can",
-        "johnny b quiet! im trying to chat with strangers!",
-        "while you entering, pass the beer",
-        "let the sunshine in (and stub it with sharp object)",
-        "ain't no rest for naked!",
-        "traps are gay! (but it's fine really)",
-        "beware of all the cyber aids out there",
-        "are you riding? put the phone down!!!",
-        "layla, you got me on my bees",
-        "knockin' on heaven's bore",
-        "Like a rolling jon",
-        "kiki, do you like and respect me in an aplatonic way?",
-        "the thrill is gone! but the strangers still here :)",
-        "smells like teen. ",
-        "beat your meat, just beat it!",
-        "Mr. Sandman, bring me a waifu ",
-      ],
     };
   }
   componentDidMount() {
@@ -54,7 +22,6 @@ class Home extends React.Component {
       if (name) {
         this.setState({ nickName: name });
       }
-      this.setState({ openingSentence: this.pickRandomSentence() });
     }
     if (window.location.search.includes("disconnect")) {
       cogoToast.error("Seems like we disconnected! You can connect again now", {
@@ -104,20 +71,15 @@ class Home extends React.Component {
       </div>
     );
   }
-  pickRandomSentence() {
-    let len = this.state.openingSentences.length;
-    const ran = Math.random() * len;
-    let floor = Math.floor(ran);
-    return this.state.openingSentences[floor];
-  }
+
   renderOtherUserScreen() {
     return (
       <div id="wrapHome">
         <h4 id="h4" className="subTitle ">
-          {this.state.openingSentence}
+          Talk to other people. about... Music!
         </h4>
         <div class="desc">
-          <p>change your nickname and disappear into the night:</p>
+          <p>choose your nickname:</p>
           <input
             onChange={(evt) => this.setState({ nickName: evt.target.value })}
             className="nicknameInput"
@@ -135,7 +97,8 @@ class Home extends React.Component {
           }}
         >
           {" "}
-          let me in!
+          <img className="spotifyLogo_img" src="spotifyLogo.png" />
+          Connect
         </button>
       </div>
     );
