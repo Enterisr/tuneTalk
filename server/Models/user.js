@@ -3,7 +3,7 @@ const RM = require("./roomManager");
 const moment = require("moment");
 const DEFAULT_SPOTIFY_DATA = require("../defaultSpotifyData");
 const { v4: uuidv4 } = require("uuid");
-const { logger } = require("../server");
+const logger = require("../Logger");
 
 class User {
   constructor(
@@ -63,7 +63,7 @@ class User {
       this.socket.emit("noActualTaste");
     }
     this.socket.on("New message", (msg) => {
-      logger.info("new message");
+      logger.info("new message: " + msg);
       this.socket
         .to(this.roomID)
         .emit("New message", msg, moment().format("HH:mm:ss"));

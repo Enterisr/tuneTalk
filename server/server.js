@@ -15,14 +15,12 @@ const io = new sockIO(http, {
   wsEngine: "ws",
 });
 const port = process.env.PORT || 5000;
-const { LoggingWinston: GCPLogger } = require("@google-cloud/logging-winston");
-const GCPLogging = new GCPLogger();
+const logger = require("./Logger");
 const RoomManager = require("./Models/roomManager");
 const TitleBuilder = require("./Models/TitleBuilder/TitleBuilder");
 const roomManager = new RoomManager("name", io);
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const winston = require("winston");
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_SECRET;
 const prodURI = require("./CONSTS").productionURI;
@@ -35,12 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("./public")).use(cors());
 app.use(cookieParser());
 //let roomManager = new RoomManager('/my-namespace');
-const logger = winston.createLogger({
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: "combined.log" }),
-  ],
-});
+
 app.post("/getTitle", async (req, res) => {
   let title = await TitleBuilder.GetTitleForStatus(req.body.appStatus);
   res.send(title);
@@ -117,24 +110,11 @@ if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
     //disable caching the HTML file, so it won't ask for non existing files
     ///(because CRA generates new files with each build...)
-    response.header(
-      "Cache-Control",
-      "private, no-cache, no-store, must-revalidate"
-    );
-    response.header("Expires", "-1");
-    response.header("Pragma", "no-cache");
+    res.header("Cache-Control", "private, no-cache, no-store, must-revalidate");
+    res.header("Expires", "-1");
+    res.header("Pragma", "no-cache");
     res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
-  });
-  //also use gcplogging
-  logger = winston.createLogger({
-    transports: [
-      new winston.transports.Console(),
-      GCPLogging,
-      // new winston.transports.Http({})
-      new winston.transports.File({ filename: "combined.log" }),
-    ],
   });
 }
 
 http.listen(port, () => logger.info(`Listening on port ${port}`));
-module.exports.logger = logger;
