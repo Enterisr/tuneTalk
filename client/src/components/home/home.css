@@ -28,6 +28,7 @@ input.nicknameInput:focus {
   background-color: #2d6f57;
   box-shadow: 0px 0px 29px -13px #37b16a;
   padding: 0 1em;
+  padding-left: 1.8em;
   line-height: 0;
   font-family: "Titillium Web";
   border-radius: 12px;
@@ -41,8 +42,15 @@ input.nicknameInput:focus {
   background: linear-gradient(to left, #49bd69, #2d6f57);
   outline: none;
   border: none;
+  position: relative;
 }
-
+.spotifyLogo_img {
+  height: 1.1em;
+  left: 0.3em;
+  top: 50%;
+  transform: translateY(-49%);
+  position: absolute;
+}
 .subTitle {
   /*! flex-grow: 2; */
   background: -webkit-linear-gradient(left, #00ff6a, #003cff);
@@ -106,23 +114,27 @@ input.nicknameInput:focus {
   .nicknameInput {
     width: 100%;
     margin: 0;
-    background-color: rgb(31, 31, 31);
-    padding: 0.5em;
+    background-color: rgb(34, 34, 34);
+    padding: 0.8em;
     margin-top: 1em;
+    font-size: 1em;
   }
   input.nicknameInput:focus {
-    box-shadow: 2px 7px 2px -7px #008ac3, inset 0px 5px 8px -7px #16ff9e;
+    box-shadow: none;
     width: 100%;
     margin: 0;
-    background-color: rgb(31, 31, 31);
-    padding: 0.5em;
+    background-color: rgb(34, 34, 34);
+    padding: 0.8em;
     margin-top: 1em;
+    box-shadow: 0px 0px 2px 1px rgb(24, 158, 129);
   }
 
   #wrapHome > .desc {
-    font-size: 2vh;
-    box-shadow: 0px 0px 0px 2px #a8ffff;
-
+    background-color: transparent;
     width: 100vw;
+
+    font-size: 0.5em;
+    background: rgba(94, 94, 94, 0.493);
+    box-shadow: none;
   }
 }
