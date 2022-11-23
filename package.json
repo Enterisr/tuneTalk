@@ -35,7 +35,7 @@
     "react-native": "^0.65.1",
     "react-router-dom": "^5.0.1",
     "request": "^2.88.0",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.5.0",
     "sweetalert2": "^8.8.7",
     "sweetalert2-react-content": "^1.1.0",
     "util": "^0.12.1",
